@@ -13,8 +13,8 @@ class _SideBarState extends State<SideBar> {
   int _selectedIndex = 0;
 
   final options = [
-    new DrawerItem("Aeroplane", Icons.local_airport),
-    new DrawerItem("Pizza", Icons.local_pizza),
+    new DrawerItem("Search", Icons.fastfood),
+    new DrawerItem("Favourite", Icons.local_pizza),
     new DrawerItem("Coffee", Icons.local_cafe)    
   ];
 
@@ -51,12 +51,12 @@ class _SideBarState extends State<SideBar> {
               child: new DrawerHeader(
                 child: word.drawerTitle(com.SideBarName),
                 decoration: BoxDecoration(
-                  color: Colors.lightGreen,
+                  color: Colors.deepPurple,
                 ),
               ),
             ),
-           Container(
-              child: drawerOptions.first,            
+           Card(
+              child: drawerOptions.first,                          
            ),            
           ],
         ),
