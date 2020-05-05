@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe/com_var.dart'
-as com;
+import 'package:recipe/com_var.dart' as com;
 import 'word.dart'
 as word;
+
 class SideBar extends StatefulWidget {
   @override
   _SideBarState createState() => _SideBarState();
@@ -21,6 +23,7 @@ class _SideBarState extends State<SideBar> {
   _onSelectItem(int index) {
     setState(() {
       _selectedIndex = index;
+      debugPrint('$_selectedIndex');
     });
     Navigator.of(context).pop(); // close the drawer
   }
@@ -57,7 +60,13 @@ class _SideBarState extends State<SideBar> {
             ),
            Card(
               child: drawerOptions.first,                          
-           ),            
+           ),
+           Card(
+              child: drawerOptions[1],                          
+           ),
+           Card(
+              child: drawerOptions[2],                          
+           ),
           ],
         ),
       )
@@ -68,6 +77,5 @@ class _SideBarState extends State<SideBar> {
 class DrawerItem {
   String title;
   IconData icon;
-
   DrawerItem(this.title, this.icon);
 }
