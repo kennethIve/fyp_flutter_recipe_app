@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:recipe/component/recipeCard.dart';
 import 'package:recipe/controller/recipeRest.dart';
@@ -33,11 +31,10 @@ class _ListPageState extends State<ListPage> {
       }
       //for load and refresh  
       Future refreshList() async{    
-        List<Recipe> temp = await RecipeRest().getAllRecipes(range: itemRange);      
+        List<Recipe> temp = await RecipeRest().getAllRecipes(range: itemRange);
         setState(() {      
           recipes = temp;
         });
-        debugPrint(recipes.length.toString());
         return Null;
       }
       //for lazy load more
@@ -100,28 +97,30 @@ class _ListPageState extends State<ListPage> {
           ),
         );
       
-        // old version
-        return Scaffold(
-          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-          appBar: topBar,
-          bottomNavigationBar: botBar,
-          drawer: drawer.SideBar(),
-          body:RefreshIndicator(
-            child: new ListView.builder(                    
+        var listBuilder = ListView.builder(                    
               controller: controller,
               itemCount: recipes.length,          
               itemBuilder: (context, index){       
-                  return RecipeCard(recipe: recipes[index]);                      
-              }), 
+                  return RecipeCard(recipe: recipes[index]);                  
+              });
+
+        var refreshIndicator = RefreshIndicator(
+            child: listBuilder, 
             onRefresh: refreshList,
-          ),
+          );
+        return Scaffold(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.9),
+          appBar: topBar,
+          //bottomNavigationBar: botBar,
+          //drawer: drawer.SideBar(),
+          body:refreshIndicator
         );
       }
     
       void _scrollListener() {
-        debugPrint(controller.position.extentAfter.toString());
+        //debugPrint(controller.position.extentAfter.toString());
         if (controller.position.extentAfter == 0) {          
-          lazyLoad();
+          //lazyLoad();
         }
     }
 }

@@ -2,6 +2,7 @@ library restcall;
 import 'dart:core';
 import 'dart:math';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:recipe/model/recipeModel.dart';
 
 class RecipeRest{
@@ -21,10 +22,11 @@ class RecipeRest{
   Future<List<Recipe>> getAllRecipes({int range = 2}) async {
     try {
       Response response = await dio.get("http://www.google.com");
-      List<Recipe> temp = recipes.sublist(0,range);         
+      List<Recipe> temp = recipes.sublist(0,range);
+      debugPrint("RestCall Status Code: "+response.statusCode.toString());
       return temp; 
     } catch (e) {
-      print(e);      
+      debugPrint(e);      
       return recipes;
     }
       

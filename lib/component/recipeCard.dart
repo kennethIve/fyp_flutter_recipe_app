@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe/model/recipeModel.dart';
 import 'package:recipe/screens/home.dart';
+import 'package:recipe/screens/recipeDetailPage.dart';
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;
@@ -10,19 +11,16 @@ class RecipeCard extends StatelessWidget {
     this.recipe
   }): super(key: key);
   //route to detail page
-  showDetail(){
-    //print(recipe.name);
-    // Navigator.push(
-    //   context,
-    //    MaterialPageRoute(builder: (context)=>ListPage(title:recipe.name))
-    // );
+   showDetail(BuildContext context) async {
+    print(recipe.name);
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>RecipeDetailPage(recipe: this.recipe,)));
   }
   @override
   Widget build(BuildContext context) {
     return new Card(
           margin: EdgeInsets.symmetric(vertical:10.0,horizontal:30.0),
           child: new InkWell(
-            onDoubleTap: showDetail(),
+            onTap: (){showDetail(context);},
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
