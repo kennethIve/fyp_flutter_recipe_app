@@ -25,6 +25,7 @@ dependencies:
   tflite: ^1.0.5 #for accessing tensorflow lite model https://pub.dev/packages/tflite#-installing-tab-
   dio: ^3.0.9 #http access package https://pub.dev/packages/dio#-installing-tab-
   camera: ^0.5.7+4 #camera module https://pub.dev/packages/camera#-installing-tab-
+  smooth_star_rating: 1.1.1 #https://pub.dev/packages/smooth_star_rating
 
 dev_dependencies:
   flutter_test:

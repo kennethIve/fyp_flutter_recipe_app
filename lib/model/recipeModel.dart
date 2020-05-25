@@ -7,6 +7,8 @@ class Recipe{
 
   double duration = 10;
 
+  double rating = 3;
+
   String description; //recipe description
 
   List<String>steps; //recipe steps
