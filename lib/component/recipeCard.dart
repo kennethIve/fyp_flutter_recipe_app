@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe/model/recipeModel.dart';
 import 'package:recipe/screens/recipeDetailPage.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
@@ -19,14 +20,14 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            height: 200,            
+            height: 125,            
             child: Card(
               margin: EdgeInsets.symmetric(vertical:2.0,horizontal:10.0),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),              
-              child: new InkWell(            
+              child: new InkWell(                            
                 onTap: (){showDetail(context);},            
-                child: Padding(padding: EdgeInsets.all(10),child: block(),)
-              )
+                child: Padding(padding: EdgeInsets.all(10),child: block(),)                
+              )              
             )
         );
   }
@@ -34,7 +35,7 @@ class RecipeCard extends StatelessWidget {
   Widget oldBlock(){
     return Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+              children: <Widget>[                
                 img(),
                 ListTile(
                   leading: Text(recipe.getDuration()+"Mins"),
@@ -57,20 +58,22 @@ class RecipeCard extends StatelessWidget {
   //recipe widget
   Widget block(){
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          height: 180,
-          width: 180,
-          child: Image.network(recipe.imgUrl,fit: BoxFit.cover,loadingBuilder: (context,child,progress){
+          height: 125,
+          width: 125,
+          child: Image.network(recipe.imgUrl,fit: BoxFit.fitHeight,loadingBuilder: (context,child,progress){
                     if (progress == null) return child; 
                     return Center(
                       child: CircularProgressIndicator(value: progress.expectedTotalBytes != null ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes : null,),);
                     },
                     ),
-        ),        
-        desc(),        
+        ),
+        Container(
+          child: desc(),
+        )
       ],
     );
   }
@@ -80,10 +83,10 @@ class RecipeCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [        
         Container(
-          child:Text(recipe.name,style: TextStyle(fontSize: 25,fontFamily:"Serif"),textAlign: TextAlign.start,)
+          child:Text(recipe.name,style: GoogleFonts.notoSerif(textStyle: TextStyle(fontSize: 20)),textAlign: TextAlign.start,)
         ),
         Container(        
-          child:SmoothStarRating(starCount: 5,rating: recipe.rating,isReadOnly: true,)
+          child:SmoothStarRating(starCount: 5,rating: recipe.rating,isReadOnly: true,size: 18,)
         ),
         Container(
           child: Row(children: [
@@ -94,6 +97,7 @@ class RecipeCard extends StatelessWidget {
             Text(
               " Mins",style:TextStyle(fontSize:15,fontFamily: "Serif")
             ),
+            Icon(Icons.favorite,size: 18),
           ]),
         ),
       ],
@@ -104,7 +108,7 @@ class RecipeCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(10),
       child:AspectRatio(      
-        aspectRatio: 19.0 / 8.0,
+        aspectRatio: 1.0 / 2.0,
         child: Image.network(          
           recipe.imgUrl,
           fit: BoxFit.cover,          

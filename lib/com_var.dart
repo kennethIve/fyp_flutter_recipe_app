@@ -1,24 +1,39 @@
 library my_lib.globals;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//global variable
-String AppName = 'Recipe';
 
-String SideBarName = 'Options';
+//global variable
+String appName = 'Recipe';
+
+String sideBarName = 'Options';
 
 //common widgets
-Widget topBar = AppBar(
-          elevation: 0.1,
+topBar({String type,Future<dynamic> search()}){
+  if(type == "listPage"){
+    return AppBar(
+          elevation: 0.5,
           backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),
-          title: Center(child: Text(AppName)),          
+          title: Text(appName),          
+          centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.search),
-              onPressed: () {
-              },
+              onPressed: search,
             )
           ],
         );
+  }
+  return AppBar(
+        elevation: 0.5,
+        backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),
+        title:Text(appName),          
+        centerTitle: true,
+        actions: <Widget>[
+        ],
+      );
+  
+}
 
 Widget botBar = Container(
           height: 55.0,

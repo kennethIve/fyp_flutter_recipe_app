@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import "package:recipe/com_var.dart" as common;
 import './screens/ListPage.dart';
 
 void main() {

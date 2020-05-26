@@ -13,7 +13,7 @@ class IngredientSearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-          appBar: topBar,
+          appBar: topBar(),
           drawer: SideBar(),
           backgroundColor: null,//Color.fromRGBO(58, 66, 86, 1.0),
           body: Center(

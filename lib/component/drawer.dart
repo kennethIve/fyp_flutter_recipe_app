@@ -1,12 +1,10 @@
-import 'package:dio/dio.dart';
-import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe/com_var.dart' as com;
 import 'package:recipe/screens/IngredientSearchPage.dart';
 import 'package:recipe/screens/ListPage.dart';
 import 'package:recipe/screens/SearchPage.dart';
-import 'package:recipe/screens/recipeDetailPage.dart';
 import 'word.dart'
 as word;
 
@@ -42,7 +40,7 @@ class _SideBarState extends State<SideBar> {
     //drawer header
     drawerOptions.add(Container(
         height: 90.0,
-        child: new DrawerHeader(child: word.drawerTitle(com.SideBarName),decoration: BoxDecoration(color: Color.fromRGBO(95, 144, 148, 1),),
+        child: new DrawerHeader(child: word.drawerTitle(com.sideBarName),decoration: BoxDecoration(color: Color.fromRGBO(95, 144, 148, 1),),
         ),)
     );
     //loop create drawer option

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:recipe/model/recipeModel.dart';
 
+import '../com_var.dart';
+
 class RecipeDetailPage extends StatelessWidget {
   
   const RecipeDetailPage({Key key, this.title, this.recipe}) : super(key: key);
@@ -11,7 +13,7 @@ class RecipeDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-          appBar: AppBar(),
+          appBar: topBar(),
           backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
           body: Center(
             child:Text("Recipe Detail Page",style: TextStyle(color: Colors.white,fontSize: 20.0),)

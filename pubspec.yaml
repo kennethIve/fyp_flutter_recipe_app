@@ -26,6 +26,7 @@ dependencies:
   dio: ^3.0.9 #http access package https://pub.dev/packages/dio#-installing-tab-
   camera: ^0.5.7+4 #camera module https://pub.dev/packages/camera#-installing-tab-
   smooth_star_rating: 1.1.1 #https://pub.dev/packages/smooth_star_rating
+  google_fonts: ^1.1.0 #https://pub.dev/packages/google_fonts#-installing-tab-
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +46,7 @@ flutter:
   assets:
     - assets/labelmap.txt
     - assets/detect.tflite
+    - google_fonts
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
