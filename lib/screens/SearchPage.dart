@@ -20,10 +20,9 @@ class _SearchPageState extends State<SearchPage> {
       child: Scaffold(
           appBar: topBar(),
           drawer: SideBar(),
-
           backgroundColor: Colors.white,//Color.fromRGBO(58, 66, 86, 1.0),
-          body: Center(
-            child:Text("Search Page",style: TextStyle(color: Colors.black,fontSize: 20.0),)
+          body: Container(
+              child:Text("Search Page",style: TextStyle(color: Colors.black,fontSize: 20.0),)
             ),
         )
     );
