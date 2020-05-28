@@ -1,6 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe/component/BBox.dart';
 import 'package:recipe/controller/objectRecognition.dart';
+
+import 'dart:math' as math;
+
+import 'package:tflite/tflite.dart';
+
 
 //preview and do object regconition
 class ObjectDetectPage extends StatefulWidget {
@@ -15,36 +21,75 @@ class ObjectDetectPage extends StatefulWidget {
 
 class _ObjectDetectPageState extends State<ObjectDetectPage> {
 
-  List<dynamic> _recognition;
-  int _imageHeight = 0;
-  int _imageWidth = 0;
+  // List<dynamic> _recognition;
+  // int _imageHeight = 0;
+  // int _imageWidth = 0;
   String _model = "";
   int btn = 1;
+  bool isDetecting = false;
 
   CameraController controller;
 
   @override
   void initState() { 
     super.initState();
-    var cameras;
-    controller = CameraController(widget.cameras[0], ResolutionPreset.max);
+    _model = "";
+    ObjectRecognition.init();
+    //load a camera to camera chotroller
+    controller = CameraController(widget.cameras[0], ResolutionPreset.high,enableAudio: false);        
     controller.initialize().then((_) {
       if (!mounted) {
         return;
       }
-      setState(() {});
+      setState(() {});      
     });
   }
 
+  //release resourcess
+  @override
+  void dispose(){    
+    ObjectRecognition?.close();
+    controller?.dispose();    
+    super.dispose();
+  }
+  
   void initModel() async{
-    btn++;
-    debugPrint("$btn");
+    debugPrint("initModel():init tflit model");
     if (_model != "success")
-      _model = await ObjectRecognition.init();
-    setState((){
-             
-    });    
-  }  
+      _model = await ObjectRecognition.init(); 
+  }
+  
+  void doRecognition() async{
+    await controller.startImageStream((CameraImage img){        
+        if(_model == "success"){
+          if(!isDetecting){
+            isDetecting = true;
+            int startTime = new DateTime.now().millisecondsSinceEpoch;
+            debugPrint("run model");
+            Tflite.detectObjectOnFrame(
+              bytesList: img.planes.map((planes)=>planes.bytes).toList(),
+              model: "SSDMobileNet",
+              imageHeight: img.height,imageWidth: img.width,
+              imageMean: 127.5,
+              imageStd: 127.5,
+              numResultsPerClass: 3,
+              numBoxesPerBlock: 3,
+              threshold: 0.2              
+            ).then((recognitons){
+              int endTime = new DateTime.now().millisecondsSinceEpoch;
+              int duration = endTime-startTime;            
+              debugPrint("run finish, process take:$duration");
+              debugPrint(recognitons.toList()[0]["detectedClass"].toString());
+              isDetecting = false;              
+            }).whenComplete((){
+              controller.stopImageStream();
+            });                        
+          }          
+        }
+      });
+      controller.stopImageStream();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
@@ -53,47 +98,19 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             fit: StackFit.loose,
             overflow: Overflow.clip,
             children:<Widget>[
-              Container(                
-                child: CameraPreview(controller)
+              Container(
+                width: screen.width,
+                height: 500,
+                child: AspectRatio(
+                  aspectRatio: controller.value.aspectRatio,
+                  child: CameraPreview(controller),
+                )
               ),
-              Center(child:RaisedButton(child: Text("$btn"),onPressed: () => initModel())),
+              Center(child:RaisedButton(child: Text("do recognition"),onPressed: doRecognition,))
+              //BBox(previewH, previewW, screenH, screenW, model, results),
             ]
           );
     
   }
 }
 
-// return Scaffold(
-    //   body: _model == ""
-    //       ? Center(
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.center,
-    //             children: <Widget>[
-    //               RaisedButton(
-    //                 child: const Text("Start to Recognize Ingredients"),
-    //                 onPressed: () => (){initModel();},
-    //               ),
-    //               AspectRatio(
-    //                 aspectRatio: 4 / 4,
-    //                 child: CameraPreview(CameraController(widget.cameras[0],ResolutionPreset.medium)),
-    //               )
-    //             ],
-    //           ),
-    //         )
-    //       : Stack(
-    //           children: [                
-                // Camera(
-                //   widget.cameras,
-                //   _model,
-                //   setRecognitions,
-                // ),
-                // BndBox(
-                //     _recognitions == null ? [] : _recognitions,
-                //     math.max(_imageHeight, _imageWidth),
-                //     math.min(_imageHeight, _imageWidth),
-                //     screen.height,
-                //     screen.width,
-                //     _model),
-    //           ],
-    //         ),
-    // );

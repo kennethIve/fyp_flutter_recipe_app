@@ -1,6 +1,8 @@
 
+import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:loadmore/loadmore.dart';
 import 'package:recipe/component/recipeCard.dart';
 import 'package:recipe/controller/recipeRest.dart';
 import '../component/drawer.dart' as drawer;
@@ -26,6 +28,7 @@ class _ListPageState extends State < ListPage > {
   int itemRange;
   ScrollController controller;
   String loadingTag = '##loading##';
+  bool noMore = false;
 
   @override
   void initState() {
@@ -36,21 +39,25 @@ class _ListPageState extends State < ListPage > {
     refreshList();
   }
   //for load and refresh  
-  Future refreshList() async {
+  Future<void> refreshList() async {
     List < Recipe > temp = await RecipeRest().getAllRecipes(range: itemRange);
+    noMore = false;
     setState(() {
       recipes = temp;
-    });
-    return Null;
+    });    
   }
   //for lazy load more
-  Future < void > lazyLoad() async {
-    debugPrint("Before load:" + recipes.length.toString());
-    List < Recipe > temp = await RecipeRest().getNextSetRecips(index: recipes.length);
+  Future <bool> lazyLoad() async {
+    var before = recipes.length;
+    await Future.delayed(Duration(milliseconds: 1500));
+    List <Recipe> temp = await RecipeRest().getNextSetRecips(index: recipes.length);
+    recipes.addAll(temp);
     setState(() {
-      recipes.addAll(temp);
+      
     });
-    debugPrint("After load:" + recipes.length.toString());
+    var after = recipes.length;
+    noMore = (before==after);
+    return true;
   }
 
   void toggleDoneHandler(index) {
@@ -62,18 +69,23 @@ class _ListPageState extends State < ListPage > {
   @override
   Widget build(BuildContext context) {
 
-    var listBuilder = ListView.builder(
-      controller: controller,
+    //RaisedButton loadMore = RaisedButton(onPressed: (){lazyLoad();},child: Text("$loadingTag"),);
+
+    ListView listBuilder = new ListView.builder(
+      //controller: controller,
       padding: EdgeInsets.only(top: 10),
+      //physics: const AlwaysScrollableScrollPhysics(),
       itemCount: recipes.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (context, index) {                
+        //return (index==recipes.length)?Container(child:loadMore):RecipeCard(recipe: recipes[index]);
         return RecipeCard(recipe: recipes[index]);
       });
 
-    var refreshIndicator = RefreshIndicator(
+    RefreshIndicator refreshIndicator = new RefreshIndicator(
       child: listBuilder,
       onRefresh: refreshList,
     );
+    //load more tag at listview last page  
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 0.9),
       appBar: topBar(type: "listPage", search: () {
@@ -81,12 +93,38 @@ class _ListPageState extends State < ListPage > {
       }),
       //bottomNavigationBar: botBar,
       drawer: drawer.SideBar(),
-      body: refreshIndicator
+      body: RefreshIndicator(
+        onRefresh: refreshList,
+        child: LoadMore(
+          child: listBuilder, 
+          onLoadMore: lazyLoad,
+          isFinish: noMore,
+          textBuilder: (status){
+            String text;
+            switch (status) {
+              case LoadMoreStatus.fail:
+                text = "Process fail, click to retry!";
+                break;
+              case LoadMoreStatus.idle:
+                text = "Waiting for more recipe~";
+                break;
+              case LoadMoreStatus.loading:
+                text = "Loading，please wait...";
+                break;
+              case LoadMoreStatus.nomore:
+                text = "No More Recipe Found!";
+                break;
+              default:
+                text = "";
+            }
+            return text;
+          },),
+        )
     );
   }
 
   void _scrollListener() {
-    //debugPrint(controller.position.extentAfter.toString());
+    debugPrint(controller.position.extentAfter.toString());    
     if (controller.position.extentAfter == 0) {
       //lazyLoad();
     }

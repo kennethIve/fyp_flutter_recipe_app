@@ -23,9 +23,8 @@ class IngredientSearchPage extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.search), 
               onPressed: () async {
-                List<CameraDescription> cameras = await availableCameras();
-                Future.delayed(Duration(seconds:2)).then((value) => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ObjectDetectPage(cameras: cameras,)))
+                await availableCameras().then((cameras){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ObjectDetectPage(cameras: cameras,)));
                 });                
               }
             ),

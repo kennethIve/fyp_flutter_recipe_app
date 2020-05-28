@@ -7,7 +7,7 @@ class RecipeRest{
 
   static Dio dio = new Dio();
 
-  final List<Recipe>recipes = [
+  List<Recipe>recipes = [
       Recipe('r456', 'description 1', ['steps 1','steps 2']),
       Recipe('r2', 'description 1', ['steps 1','steps 2']),
       Recipe('r1', 'description 1', ['steps 1','steps 2']),
@@ -15,6 +15,22 @@ class RecipeRest{
       Recipe('r1', 'description 1', ['steps 1','steps 2']),
       Recipe('r1', 'description 1', ['steps 1','steps 2']),
       Recipe('r1', 'description 1', ['steps 1','steps 2']),
+      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend', 'description 2', ['steps 1','steps 2']),
+      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend', 'description 2', ['steps 1','steps 2']),
+      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
+      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
       Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
       Recipe('rend', 'description 2', ['steps 1','steps 2'])
   ];
@@ -37,7 +53,7 @@ class RecipeRest{
     try {
       Response response = await dio.get("http://www.google.com");
       response.toString();
-      List<Recipe> temp = recipes.sublist(index,index+1);         
+      List<Recipe> temp = recipes.sublist(index,index+3);         
       return temp; 
     } catch (e) {
       print(e);      

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'fyp temp',
       theme: new ThemeData(primaryColor: Color.fromRGBO(58, 66, 86, 1.0)),
-      debugShowCheckedModeBanner: false,     
+      debugShowCheckedModeBanner: true,     
       home: ListPage(title: 'Recipes'),            
     );
   }

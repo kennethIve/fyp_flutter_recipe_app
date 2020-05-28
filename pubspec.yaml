@@ -27,6 +27,8 @@ dependencies:
   camera: ^0.5.7+4 #camera module https://pub.dev/packages/camera#-installing-tab-
   smooth_star_rating: 1.1.1 #https://pub.dev/packages/smooth_star_rating
   google_fonts: ^1.1.0 #https://pub.dev/packages/google_fonts#-installing-tab-
+  loadmore: ^1.0.4 #for listview to load more
+
 
 dev_dependencies:
   flutter_test:

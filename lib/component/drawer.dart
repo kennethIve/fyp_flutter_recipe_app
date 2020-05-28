@@ -30,6 +30,7 @@ class _SideBarState extends State<SideBar> {
       if(index == _selectedIndex)
         return;
       _selectedIndex = index;
+      Navigator.pop(context);
       Navigator.push(context, options[_selectedIndex].page);
     });
   }
