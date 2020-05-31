@@ -21,7 +21,7 @@ class IngredientSearchPage extends StatelessWidget {
           drawer: SideBar(),
           bottomNavigationBar: BottomAppBar(
             child: IconButton(
-              icon: Icon(Icons.search), 
+              icon: Icon(Icons.camera), 
               onPressed: () async {
                 await availableCameras().then((cameras){
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>ObjectDetectPage(cameras: cameras,)));
