@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe/component/BBox.dart';
 import 'package:recipe/controller/objectRecognition.dart';
 import 'package:recipe/screens/SearchPage.dart';
@@ -30,11 +31,13 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   bool isDetecting = false;
   List<dynamic> ingredients=[];
   CameraController controller;
+  bool scan_flag = false;
 
   @override
   void initState() { 
     super.initState();
     _model = "";
+    scan_flag = false;
     initModel();
     //load a camera to camera chotroller
     controller = CameraController(widget.cameras[0], ResolutionPreset.max,enableAudio: false);        
@@ -64,7 +67,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   void doRecognition() {
     controller.startImageStream((CameraImage img){
       setState(() {});   
-      //if(_model == "success"){
+      if(scan_flag){
         if(!isDetecting){
           isDetecting = true;
           //int startTime = new DateTime.now().millisecondsSinceEpoch;
@@ -87,7 +90,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             isDetecting = false;              
           });                       
         }          
-      //}
+      }
     });
       //controller.stopImageStream();
   }
@@ -100,7 +103,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     }    
     return Material(
           child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,          
           children: <Widget>[
             Container(
                     width: screen.width,
@@ -112,7 +115,26 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                         AspectRatio(
                             aspectRatio: 4/6,
                             child: CameraPreview(controller),
-                          )
+                          ),
+                        Positioned(
+                          right: 30,
+                          bottom: 30,
+                          child: FloatingActionButton(                            
+                            child: Icon(Icons.camera_rear),
+                            backgroundColor: (scan_flag)?Colors.green:Colors.grey,
+                            onPressed: (){
+                              scan_flag = (scan_flag)?false:true;
+                              Fluttertoast.showToast(msg: (scan_flag)?"Start Scaning Ingredients":"Scanning Stop",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: (scan_flag)?Colors.green:Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0                                  
+                              );
+                              setState(() {});
+                            },
+                        ))
                       ])
               ),
             new Container(
