@@ -23,28 +23,35 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State < ListPage > {
 
-  List < Recipe > recipes = [];
+  List < Recipe > recipes;
   int count;
   int itemRange;
   ScrollController controller;
   String loadingTag = '##loading##';
   bool noMore = false;
+  bool emptyload = true;
 
   @override
   void initState() {
     super.initState();
     itemRange = 5;
     count = 0;
-    controller = new ScrollController()..addListener(_scrollListener);
+    //controller = new ScrollController()..addListener(_scrollListener);    
     refreshList();
   }
+
   //for load and refresh  
-  Future<void> refreshList() async {
-    List < Recipe > temp = await RecipeRest().getAllRecipes(range: itemRange);
+  Future<void> refreshList() async {    
+    recipes = new List() ;    
+    emptyload = true;
     noMore = false;
+    setState(() {});    
+    List < Recipe > temp = await RecipeRest().getAllRecipes(range: itemRange);
+    recipes = temp;    
     setState(() {
-      recipes = temp;
-    });    
+      emptyload = false;
+    });
+    emptyload = false;
   }
   //for lazy load more
   Future <bool> lazyLoad() async {
@@ -52,9 +59,7 @@ class _ListPageState extends State < ListPage > {
     await Future.delayed(Duration(milliseconds: 1500));
     List <Recipe> temp = await RecipeRest().getNextSetRecips(index: recipes.length);
     recipes.addAll(temp);
-    setState(() {
-      
-    });
+    setState(() {});
     var after = recipes.length;
     noMore = (before==after);
     return true;
@@ -66,38 +71,39 @@ class _ListPageState extends State < ListPage > {
     });
   }
 
+  Widget filterBtn (BuildContext context){
+    return FloatingActionButton(
+      child: Icon(Icons.format_list_bulleted),
+      backgroundColor: defaultTheme.primaryColor,
+      onPressed: (){ showfilterModal(context);},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    //RaisedButton loadMore = RaisedButton(onPressed: (){lazyLoad();},child: Text("$loadingTag"),);
-
-    ListView listBuilder = new ListView.builder(
-      //controller: controller,
-      padding: EdgeInsets.only(top: 10),
-      //physics: const AlwaysScrollableScrollPhysics(),
+    
+    ListView listBuilder = new ListView.builder(      
+      padding: EdgeInsets.only(top: 10),      
       itemCount: recipes.length,
-      itemBuilder: (context, index) {                
-        //return (index==recipes.length)?Container(child:loadMore):RecipeCard(recipe: recipes[index]);
+      itemBuilder: (context, index) {                        
         return RecipeCard(recipe: recipes[index]);
       });
-
-    RefreshIndicator refreshIndicator = new RefreshIndicator(
-      child: listBuilder,
-      onRefresh: refreshList,
-    );
+    
     //load more tag at listview last page  
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 0.9),
-      appBar: topBar(type: "listPage", search: () {
-        return showSearch(context: context, delegate: DataSearch());
-      }),
+      appBar: topBar(type: "listPage", search: () {return showSearch(context: context, delegate: DataSearch());}),
       //bottomNavigationBar: botBar,
       drawer: drawer.SideBar(),
+      floatingActionButton: filterBtn(context),// form com_var
+      bottomSheet: null,
       body: RefreshIndicator(
         onRefresh: refreshList,
-        child: LoadMore(
+        color: Colors.amber,
+        child: new LoadMore(
           child: listBuilder, 
           onLoadMore: lazyLoad,
+          whenEmptyLoad: true,
           isFinish: noMore,
           textBuilder: (status){
             String text;
@@ -179,15 +185,12 @@ class DataSearch extends SearchDelegate {
       future:getRecipeByKeyword(),
       builder: (BuildContext context,AsyncSnapshot snapshot){
         if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            // 请求失败，显示错误
+          if (snapshot.hasError) {            
             return Center(child:Text("Network Connection Fail"));
-          } else {
-            // 请求成功，显示数据
+          } else {            
             return snapshot.data;
           }
-        } else {
-          // 请求未结束，显示loading
+        } else {          
           return LinearProgressIndicator();          
         }
       }

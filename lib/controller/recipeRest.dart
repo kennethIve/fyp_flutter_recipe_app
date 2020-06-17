@@ -6,6 +6,8 @@ import 'package:recipe/model/recipeModel.dart';
 class RecipeRest{
 
   static Dio dio = new Dio();
+  static String url = "http://104.154.239.168/api";
+  static String token = "t1TkHac7Tugi4mY7u6lxyYKgp4uz8w34KRLY2Dgi";
 
   List<Recipe>recipes = [
       Recipe('r456', 'description 1', ['steps 1','steps 2']),
@@ -36,11 +38,18 @@ class RecipeRest{
   ];
   RecipeRest();
 
+  void dioAuth(){
+      dio.options.headers["Content-Type"] = Headers.jsonContentType;
+      dio.options.headers["X-Requested-With"] = "XMLHttpRequest";
+      dio.options.headers["Authorization"] = token;
+  }
   Future<List<Recipe>> getAllRecipes({int range = 2}) async {
     try {
-      Response response = await dio.get("http://www.google.com");
+      dioAuth();      
+      Response response = await dio.get(url+"/details");//testing api
       List<Recipe> temp = recipes.sublist(0,range);
       debugPrint("RestCall --getAllRecipes-- Status Code: "+response.statusCode.toString());
+      debugPrint("RestCall --getAllRecipes-- Status Code: "+response.data["request"].toString());
       return temp; 
     } catch (e) {
       debugPrint(e);      
@@ -53,7 +62,7 @@ class RecipeRest{
     try {
       Response response = await dio.get("http://www.google.com");
       response.toString();
-      List<Recipe> temp = recipes.sublist(index,index+3);         
+      List<Recipe> temp = recipes.sublist(index,index+5);         
       return temp; 
     } catch (e) {
       print(e);      

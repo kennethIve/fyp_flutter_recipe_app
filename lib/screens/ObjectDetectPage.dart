@@ -40,12 +40,12 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     scan_flag = false;
     initModel();
     //load a camera to camera chotroller
-    controller = CameraController(widget.cameras[0], ResolutionPreset.max,enableAudio: false);        
+    controller = CameraController(widget.cameras[0], ResolutionPreset.veryHigh,enableAudio: false);        
     controller.initialize().then((_) {
       if (!mounted) {
         return;
       }
-      setState(() {});
+      //setState(() {});
       doRecognition();      
     });
   }
@@ -54,6 +54,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   @override
   void dispose(){    
     //ObjectRecognition?.close();
+    Tflite.close();
     controller?.dispose();
     super.dispose();
   }
@@ -66,7 +67,8 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   
   void doRecognition() {
     controller.startImageStream((CameraImage img){
-      setState(() {});   
+      setState(() {});
+      //object detection code
       if(scan_flag){
         if(!isDetecting){
           isDetecting = true;
@@ -78,15 +80,18 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             imageMean: 127.5,
             imageStd: 127.5,
             numResultsPerClass: 5,
-            numBoxesPerBlock: 3,
-            threshold: 0.2              
+            //numBoxesPerBlock: 5,
+            threshold: 0.6              
           ).then((recognitons){
-            ingredients = recognitons.toList();
-            setState(() {});           
+            if(recognitons.length>0){
+              ingredients = recognitons.toList();
+              debugPrint(recognitons.toList()[0].toString());
+            }
+            //setState(() {});           
             //int endTime = new DateTime.now().millisecondsSinceEpoch;
             //int duration = endTime-startTime;            
             //debugPrint("run finish, process take:$duration");
-            //debugPrint(recognitons.toList()[0]["detectedClass"].toString());
+            
             isDetecting = false;              
           });                       
         }          
@@ -107,9 +112,9 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
           children: <Widget>[
             Container(
                     width: screen.width,
-                    height: (screen.height/4)*3,
+                    height: (screen.height/5)*3,
                     child:Stack(
-                      fit: StackFit.loose,
+                      fit: StackFit.expand,
                       overflow: Overflow.clip,
                       children:<Widget>[
                         AspectRatio(
@@ -139,7 +144,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
               ),
             new Container(
               width: screen.width,
-              height: (screen.height/4),
+              height: (screen.height/5)*2,
               child: ListView.builder(
                 itemCount: ingredients.length,
                 itemBuilder: (BuildContext context, int index) {

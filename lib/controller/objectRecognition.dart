@@ -10,7 +10,8 @@ class ObjectRecognition{
   static Future<String> init() async{
     String res = await Tflite.loadModel(
       model: "assets/detect.tflite",
-      labels: "assets/labelmap.txt",      
+      labels: "assets/labelmap.txt",
+      numThreads: 2,      
     );
     return res;
   }
@@ -23,7 +24,8 @@ class ObjectRecognition{
 
   static Future<List> doRecogntion(CameraImage img) async{    
     List recognitions = await Tflite.detectObjectOnFrame(
-      bytesList: img.planes.map((plane) {return plane.bytes;}).toList(),// required      
+      bytesList: img.planes.map((plane) {return plane.bytes;}).toList(),// required
+      model: "SSDMobileNet",
       imageHeight: img.height,
       imageWidth: img.width,
       imageMean: 127.5,   // defaults to 127.5

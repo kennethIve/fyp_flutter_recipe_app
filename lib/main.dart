@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './screens/ListPage.dart';
-
+import 'com_var.dart';
 void main() {
   runApp(MyApp());
 }
@@ -11,9 +11,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'fyp temp',
-      theme: new ThemeData(primaryColor: Color.fromRGBO(58, 66, 86, 1.0)),
+      theme: defaultTheme,
       debugShowCheckedModeBanner: true,     
-      home: ListPage(title: 'Recipes'),            
+      home: ListPage(title: 'Recipes'),
+      
     );
   }
 }

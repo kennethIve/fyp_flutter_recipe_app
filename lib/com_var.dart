@@ -62,3 +62,51 @@ Widget botBar = Container(
             ),
           ),
         );
+
+ThemeData defaultTheme 
+= new ThemeData(
+  brightness: Brightness.light,
+  primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
+  fontFamily: 'Georgia',
+);
+
+//fillter dialogg
+
+void showfilterModal(BuildContext context) async{
+  TextStyle mystyle = TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0);
+  ShapeBorder shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0));
+  Dialog dialog = Dialog(
+    //backgroundColor: Colors.yellow[50],
+    shape: shape,
+    insetPadding: EdgeInsets.fromLTRB(5, 5, 5, 0),        
+    child: Container(
+      color: Colors.transparent,
+      height: MediaQuery.of(context).size.height * .5,
+      width: MediaQuery.of(context).size.width * .6,
+      child: Column(                
+        children: <Widget>[
+          Expanded(
+            child: Wrap(),
+          ),
+          Expanded(
+            child: Wrap(),
+          ),
+         Flex(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,            
+            direction: Axis.horizontal,
+            children:[
+              Expanded(
+                child: FlatButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel",style: mystyle,),),
+              ),
+              Expanded(
+                child: FlatButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Apply", style: mystyle,),),
+              ),
+          ]
+            )
+          
+        ],        
+      )
+    ),
+  );
+  showDialog(context: context,builder: (BuildContext context) => dialog);
+}

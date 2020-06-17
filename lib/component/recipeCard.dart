@@ -20,10 +20,10 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            height: 125,            
+            height: 150,            
             child: Card(
               margin: EdgeInsets.symmetric(vertical:2.0,horizontal:10.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),              
+              //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),              
               child: new InkWell(                            
                 onTap: (){showDetail(context);},            
                 child: Padding(padding: EdgeInsets.all(10),child: block(),)                
@@ -31,39 +31,13 @@ class RecipeCard extends StatelessWidget {
             )
         );
   }
-  //old
-  Widget oldBlock(){
-    return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[                
-                img(),
-                ListTile(
-                  leading: Text(recipe.getDuration()+"Mins"),
-                  title: Text(recipe.name),
-                  subtitle: Text(recipe.description),
-                ),
-                ButtonBar(
-                  children: <Widget>[
-                    // FlatButton(
-                    //   child: const Text('Detail'),
-                    //   onPressed: () { /* ... */ },
-                    // ),
-                  ],
-                ),
-              ],
-            );
-  }
-  
-
   //recipe widget
   Widget block(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Container(
-          height: 125,
-          width: 125,
+        Expanded(          
           child: Image.network(recipe.imgUrl,fit: BoxFit.fitHeight,loadingBuilder: (context,child,progress){
                     if (progress == null) return child; 
                     return Center(
@@ -71,7 +45,7 @@ class RecipeCard extends StatelessWidget {
                     },
                     ),
         ),
-        Container(
+        Expanded(
           child: desc(),
         )
       ],
