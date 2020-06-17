@@ -28,7 +28,9 @@ dependencies:
   smooth_star_rating: 1.1.1 #https://pub.dev/packages/smooth_star_rating
   google_fonts: ^1.1.0 #https://pub.dev/packages/google_fonts#-installing-tab-
   loadmore: ^1.0.4 #for listview to load more
-  fluttertoast: ^4.0.0 #https://pub.dev/packages/fluttertoast    
+  fluttertoast: ^4.0.0 #https://pub.dev/packages/fluttertoast
+  animations: ^1.1.0 
+  flutter_speed_dial: ^1.2.5  
 
 dev_dependencies:
   flutter_test:

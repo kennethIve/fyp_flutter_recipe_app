@@ -1,7 +1,7 @@
-
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:recipe/component/recipeCard.dart';
 import 'package:recipe/controller/recipeRest.dart';
@@ -30,6 +30,9 @@ class _ListPageState extends State < ListPage > {
   String loadingTag = '##loading##';
   bool noMore = false;
   bool emptyload = true;
+  static bool _visible = false;
+  var order_option = ["none","alpha","time","star"];
+  static int order_index = 0;//alphabetic 1
 
   @override
   void initState() {
@@ -71,13 +74,57 @@ class _ListPageState extends State < ListPage > {
     });
   }
 
+  // Widget filterBtn (BuildContext context){
+  //   return FloatingActionButton(
+  //     child: Icon(Icons.format_list_bulleted),
+  //     backgroundColor: defaultTheme.primaryColor,
+  //     onPressed: (){ showfilterModal(context);},
+  //   );
+  // }
   Widget filterBtn (BuildContext context){
-    return FloatingActionButton(
-      child: Icon(Icons.format_list_bulleted),
-      backgroundColor: defaultTheme.primaryColor,
-      onPressed: (){ showfilterModal(context);},
-    );
-  }
+      return SpeedDial(
+          // both default to 16
+          marginRight: 18,
+          marginBottom: 20,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          closeManually: false,
+          curve: Curves.bounceIn,
+          //overlayColor: Colors.black,
+          visible: !emptyload,
+          overlayOpacity: 0.5,
+          onOpen:  () {},
+          onClose: () {},
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 8.0,
+          shape: CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.timer),
+              backgroundColor:Colors.blueGrey,
+              //label: 'Time',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {}
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.star),
+              backgroundColor:Colors.blueGrey,
+              //label: 'Star',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {},
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.text_rotate_vertical),
+              backgroundColor:Colors.blueGrey,
+              label: 'Filter by',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {},
+            ),
+          ],
+        );
+      }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe/model/recipeModel.dart';
@@ -14,22 +15,42 @@ class RecipeCard extends StatelessWidget {
   //route to detail page
    showDetail(BuildContext context) async {
     print(recipe.name);
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>RecipeDetailPage(recipe: this.recipe,)));
+    //Navigator.push(context, MaterialPageRoute(builder: (context)=>RecipeDetailPage(recipe: this.recipe,)));
+    //Navigator.push(context, MaterialPageRoute(builder: (context)=>
   }
   
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // return Container(
+    //         height: 150,            
+    //         child: Card(
+    //           margin: EdgeInsets.symmetric(vertical:2.0,horizontal:10.0),
+    //           //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),              
+    //           child: new InkWell(                            
+    //             onTap: (){showDetail(context);},            
+    //             child: Padding(padding: EdgeInsets.all(10),child: block(),)                
+    //           )              
+    //         )
+    //     );
+    return OpenContainer(
+        openElevation: 200,
+        closedColor: Colors.transparent,
+        transitionType: ContainerTransitionType.fadeThrough,
+        openBuilder: (BuildContext context, VoidCallback openContainer) {
+          return RecipeDetailPage(recipe: this.recipe,);
+        },
+        closedElevation: 10.0,
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+          return Container(
             height: 150,            
             child: Card(
               margin: EdgeInsets.symmetric(vertical:2.0,horizontal:10.0),
               //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),              
-              child: new InkWell(                            
-                onTap: (){showDetail(context);},            
-                child: Padding(padding: EdgeInsets.all(10),child: block(),)                
-              )              
+              child: Padding(padding: EdgeInsets.all(10),child: block(),)            
             )
         );
+        },
+      );
   }
   //recipe widget
   Widget block(){
@@ -60,7 +81,7 @@ class RecipeCard extends StatelessWidget {
           child:Text(recipe.name,style: GoogleFonts.notoSerif(textStyle: TextStyle(fontSize: 20)),textAlign: TextAlign.start,)
         ),
         Container(        
-          child:SmoothStarRating(starCount: 5,rating: recipe.rating,isReadOnly: true,size: 18,)
+          child:SmoothStarRating(starCount: 5,rating: recipe.rating,isReadOnly: true,size: 20,)
         ),
         Container(
           child: Row(children: [

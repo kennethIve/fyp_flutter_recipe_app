@@ -13,10 +13,10 @@ class RecipeDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-          appBar: topBar(),
+          appBar: topBar(type: "custom",title: recipe.name),
           backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
           body: Center(
-            child:Text("Recipe Detail Page",style: TextStyle(color: Colors.white,fontSize: 20.0),)
+            child:Text("Recipe:"+recipe.name,style: TextStyle(color: Colors.white,fontSize: 20.0),)
             ),
         )
     );
