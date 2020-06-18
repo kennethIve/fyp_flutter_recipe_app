@@ -9,7 +9,7 @@ String appName = 'Recipe';
 String sideBarName = 'Options';
 
 //common widgets
-topBar({String type,String title,Future<dynamic> search()}){
+topBar({String type,String title,Future<dynamic> search(),Color color}){
   if(type == "listPage"){
     return AppBar(
           elevation: 0.5,
@@ -26,7 +26,7 @@ topBar({String type,String title,Future<dynamic> search()}){
   }else if(type == "custom"){
     return AppBar(
         elevation: 0.5,
-        backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),
+        backgroundColor: color != null?color:Color.fromRGBO(95, 144, 148, 0.9),        
         title:Text(title),          
         centerTitle: true,
         actions: <Widget>[
