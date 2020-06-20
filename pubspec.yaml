@@ -25,13 +25,13 @@ dependencies:
   tflite: ^1.0.5 #for accessing tensorflow lite model https://pub.dev/packages/tflite#-installing-tab-
   dio: ^3.0.9 #http access package https://pub.dev/packages/dio#-installing-tab-
   camera: ^0.5.7+4 #camera module https://pub.dev/packages/camera#-installing-tab-
-  smooth_star_rating: 1.1.1 #https://pub.dev/packages/smooth_star_rating
+  smooth_star_rating: ^1.1.1 #https://pub.dev/packages/smooth_star_rating
   google_fonts: ^1.1.0 #https://pub.dev/packages/google_fonts#-installing-tab-
   loadmore: ^1.0.4 #for listview to load more
   fluttertoast: ^4.0.0 #https://pub.dev/packages/fluttertoast
   animations: ^1.1.0 
   flutter_speed_dial: ^1.2.5
-  flappy_search_bar: 1.4.1  
+  flappy_search_bar: ^1.4.1  
 
 dev_dependencies:
   flutter_test:

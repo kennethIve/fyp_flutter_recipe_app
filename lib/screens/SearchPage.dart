@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:recipe/com_var.dart';
 import 'package:recipe/component/drawer.dart';
 import 'package:recipe/model/recipeModel.dart';
+import 'package:flappy_search_bar/search_bar_style.dart';
+
+
 
 class SearchPage extends StatefulWidget {
 
@@ -17,7 +20,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
-  List option = ["Fast","Normal","Long","Normal","Long","Normal","Long","Normal","Long","Normal","Long","Normal","Long"];
+  List option = ["Fast","Normal"];
 
   List<Widget> optionbuilder(List options){
     List<Widget> wlist = new List<Widget>();
@@ -49,9 +52,7 @@ class _SearchPageState extends State<SearchPage> {
           appBar: topBar(type: "custom",title: "Search"),
           drawer: SideBar(),
           backgroundColor: Colors.white,//Color.fromRGBO(58, 66, 86, 1.0),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
+          body: Container(
               width: MediaQuery.of(context).size.width,
               child:Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -60,8 +61,17 @@ class _SearchPageState extends State<SearchPage> {
                   Container(
                     height: 100,
                     width: screen.width*.9,
-                    child: SearchBar(onSearch: null, onItemFound: null),
-                  ),
+                    child: SearchBar(
+                      onSearch: (value){
+                        debugPrint(value);
+                        return;
+                        },
+                      onItemFound: (obj,index){
+                        debugPrint(obj);
+                        return;
+                        },
+                      onError: (e){},
+                    ),),
                   Expanded(
                     child: Column(
                       children:[
@@ -76,6 +86,6 @@ class _SearchPageState extends State<SearchPage> {
             ),
           )
         )
-    );
+    ;
   }
 }

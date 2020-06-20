@@ -30,16 +30,20 @@ class _ListPageState extends State < ListPage > {
   String loadingTag = '##loading##';
   bool noMore = false;
   bool emptyload = true;
+
   static bool _visible = false;
   var order_option = ["none","alpha","time","star"];
-  static int order_index = 0;//alphabetic 1
+  static int order_index = 0;
+
+  var _isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     itemRange = 5;
     count = 0;
-    //controller = new ScrollController()..addListener(_scrollListener);    
+    controller = new ScrollController()..addListener(_scrollListener);
+    _isFirstLoad = true;
     refreshList();
   }
 
@@ -47,25 +51,37 @@ class _ListPageState extends State < ListPage > {
   Future<void> refreshList() async {    
     recipes = new List() ;    
     emptyload = true;
-    noMore = false;
+    noMore = false;    
     setState(() {});    
-    List < Recipe > temp = await RecipeRest().getAllRecipes(range: itemRange);
-    recipes = temp;    
-    setState(() {
+    await RecipeRest().getAllRecipes(range: itemRange).then((list){
+        recipes = list;    
+      setState(() {
+        emptyload = false;
+      });
       emptyload = false;
+      _isFirstLoad = false;
     });
-    emptyload = false;
+    
   }
   //for lazy load more
   Future <bool> lazyLoad() async {
     var before = recipes.length;
-    await Future.delayed(Duration(milliseconds: 1500));
-    List <Recipe> temp = await RecipeRest().getNextSetRecips(index: recipes.length);
-    recipes.addAll(temp);
-    setState(() {});
-    var after = recipes.length;
-    noMore = (before==after);
-    return true;
+    //await Future.delayed(Duration(milliseconds: 1500));
+    try{
+      await RecipeRest().getAllRecipes(start: before).then((list){
+        recipes.addAll(list);
+        setState(() {});
+        var after = recipes.length;
+        noMore = (before==after);
+        return true;
+      }).whenComplete((){
+        return true;
+      });
+    }catch(e){
+      debugPrint(e);
+      return false;
+    }
+      return true;
   }
 
   void toggleDoneHandler(index) {
@@ -74,13 +90,6 @@ class _ListPageState extends State < ListPage > {
     });
   }
 
-  // Widget filterBtn (BuildContext context){
-  //   return FloatingActionButton(
-  //     child: Icon(Icons.format_list_bulleted),
-  //     backgroundColor: defaultTheme.primaryColor,
-  //     onPressed: (){ showfilterModal(context);},
-  //   );
-  // }
   Widget filterBtn (BuildContext context){
       return SpeedDial(
           // both default to 16
@@ -150,7 +159,7 @@ class _ListPageState extends State < ListPage > {
         child: new LoadMore(
           child: listBuilder, 
           onLoadMore: lazyLoad,
-          whenEmptyLoad: true,
+          whenEmptyLoad: _isFirstLoad,
           isFinish: noMore,
           textBuilder: (status){
             String text;

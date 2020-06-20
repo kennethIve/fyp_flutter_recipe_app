@@ -6,54 +6,47 @@ import 'package:recipe/model/recipeModel.dart';
 class RecipeRest{
 
   static Dio dio = new Dio();
-  static String url = "http://104.154.239.168/api";
+  //static String url = "http://104.154.239.168/api";
+  static String url = "http://192.168.1.99/api";
   static String token = "t1TkHac7Tugi4mY7u6lxyYKgp4uz8w34KRLY2Dgi";
 
-  List<Recipe>recipes = [
-      Recipe('r456', 'description 1', ['steps 1','steps 2']),
-      Recipe('r2', 'description 1', ['steps 1','steps 2']),
-      Recipe('r1', 'description 1', ['steps 1','steps 2']),
-      Recipe('r1', 'description 1', ['steps 1','steps 2']),
-      Recipe('r1', 'description 1', ['steps 1','steps 2']),
-      Recipe('r1', 'description 1', ['steps 1','steps 2']),
-      Recipe('r1', 'description 1', ['steps 1','steps 2']),
-      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend', 'description 2', ['steps 1','steps 2']),
-      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend', 'description 2', ['steps 1','steps 2']),
-      Recipe('kenneth', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-4', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-3', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-2', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend-1', 'description 1', ['steps 1','steps 2']),
-      Recipe('rend', 'description 2', ['steps 1','steps 2'])
-  ];
+  static List<Recipe>recipes = [];
   RecipeRest();
 
   void dioAuth(){
-      dio.options.headers["Content-Type"] = Headers.jsonContentType;
-      dio.options.headers["X-Requested-With"] = "XMLHttpRequest";
+      dio.options.baseUrl = url;
+      dio.options.connectTimeout =15000;
+      dio.options.receiveTimeout = 10000;
+      dio.options.headers["Content-Type"] = 'application/json';
       dio.options.headers["Authorization"] = token;
   }
-  Future<List<Recipe>> getAllRecipes({int range = 2}) async {
+  Future<List<Recipe>> getAllRecipes({int range = 5,int start = 0}) async {
     try {
-      dioAuth();      
-      Response response = await dio.get(url+"/details");//testing api
-      List<Recipe> temp = recipes.sublist(0,range);
-      debugPrint("RestCall --getAllRecipes-- Status Code: "+response.statusCode.toString());
-      debugPrint("RestCall --getAllRecipes-- Status Code: "+response.data["request"].toString());
-      return temp; 
-    } catch (e) {
-      debugPrint(e);      
-      return recipes;
+      dioAuth();
+      Map<String, dynamic> data={"start":start,"take":range};
+      Response response = await dio.get("/getRecipes",queryParameters: data);//testing api
+      //Response response = await dio.get("http://www.google.com");
+      List<Recipe> result =[];
+      for(var recipe in response.data){
+        result.add(new Recipe(
+          recipe["recipe_id"],recipe["title"],recipe["description"],recipe["image"],
+          recipe["rating"],recipe["skill_term"],recipe["cook_time"],recipe["diet_term"],recipe["resource_url"],
+        ));
+      }
+      return result; 
+    } on DioError catch(e) {
+        if(e.response != null) {
+            print(e.response.data);
+            print(e.response.headers);
+            print(e.response.request);
+        } else{
+            print(e.request);
+            print(e);
+        }    
+      return [];
+    }catch(e){
+      print(e);
+      return [];
     }
       
   }
@@ -79,7 +72,7 @@ class RecipeRest{
       //for testing
       List<Recipe> temp = [];
       recipes.forEach((recipe){
-        if(recipe.name.contains(keyword))
+        if(recipe.title.contains(keyword))
           temp.add(recipe);
       });      
       return temp; 

@@ -14,7 +14,7 @@ class RecipeCard extends StatelessWidget {
   }): super(key: key);
   //route to detail page
    showDetail(BuildContext context) async {
-    print(recipe.name);
+    print(recipe.title);
     //Navigator.push(context, MaterialPageRoute(builder: (context)=>RecipeDetailPage(recipe: this.recipe,)));
     //Navigator.push(context, MaterialPageRoute(builder: (context)=>
   }
@@ -59,7 +59,7 @@ class RecipeCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Expanded(          
-          child: Image.network(recipe.imgUrl,fit: BoxFit.fitHeight,loadingBuilder: (context,child,progress){
+          child: Image.network(recipe.image,fit: BoxFit.fitHeight,loadingBuilder: (context,child,progress){
                     if (progress == null) return child; 
                     return Center(
                       child: CircularProgressIndicator(value: progress.expectedTotalBytes != null ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes : null,),);
@@ -78,16 +78,16 @@ class RecipeCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [        
         Container(
-          child:Text(recipe.name,style: GoogleFonts.notoSerif(textStyle: TextStyle(fontSize: 20)),textAlign: TextAlign.start,)
+          child:Text(recipe.title,style: GoogleFonts.notoSerif(textStyle: TextStyle(fontSize: 20)),textAlign: TextAlign.start,)
         ),
         Container(        
-          child:SmoothStarRating(starCount: 5,rating: recipe.rating,isReadOnly: true,size: 20,)
+          child:SmoothStarRating(starCount: 5,rating: recipe.getRating(),isReadOnly: true,size: 20,)
         ),
         Container(
           child: Row(children: [
             Icon(Icons.timer,semanticLabel: "hello world",size: 18,),
             Text(
-              recipe.duration.toString(),style:TextStyle(fontSize:15,fontFamily: "Serif")
+              recipe.getDuration().toString(),style:TextStyle(fontSize:15,fontFamily: "Serif")
             ),
             Text(
               " Mins",style:TextStyle(fontSize:15,fontFamily: "Serif")
@@ -105,7 +105,7 @@ class RecipeCard extends StatelessWidget {
       child:AspectRatio(      
         aspectRatio: 1.0 / 2.0,
         child: Image.network(          
-          recipe.imgUrl,
+          recipe.image,
           fit: BoxFit.cover,          
         ),
       )

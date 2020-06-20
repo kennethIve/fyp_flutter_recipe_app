@@ -3,23 +3,37 @@ import 'dart:core';
 
 //data model for a recipe 
 class Recipe{
-  String name;//recipe name
+  int recipeId;//recipe name
 
-  double duration = 10;
+  String title;//recipe name
 
-  double rating = 3;
+  int cookTime = 10;
+
+  int rating = 3;
+
+  int skillTerm = 3;
 
   String description; //recipe description
 
   List<String>steps; //recipe steps
 
-  String imgUrl = 'https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/chorizo-mozarella-gnocchi-bake-cropped.jpg';
+  List<String>ingredients; //recipe ingredients
 
-  Recipe(this.name,this.description,this.steps);
+  String image = 'https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/chorizo-mozarella-gnocchi-bake-cropped.jpg';
+
+  String dietTerm;
+
+  String resoureceUrl;
+
+  Recipe(this.recipeId,this.title,this.description,this.image,this.rating,this.skillTerm,this.cookTime,this.dietTerm,this.resoureceUrl);
 
   Recipe.empty();
   
   String getDuration(){
-    return duration.toString();
+    return (cookTime/60).toString();
+  }
+
+  getRating() {
+    return rating.toDouble();
   }
 }
