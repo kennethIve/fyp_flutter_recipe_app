@@ -6,8 +6,8 @@ import 'package:recipe/model/recipeModel.dart';
 class RecipeRest{
 
   static Dio dio = new Dio();
-  //static String url = "http://104.154.239.168/api";
-  static String url = "http://192.168.1.99/api";
+  static String url = "http://104.154.239.168/api";
+  //static String url = "http://192.168.1.99/api";
   static String token = "t1TkHac7Tugi4mY7u6lxyYKgp4uz8w34KRLY2Dgi";
 
   static List<Recipe>recipes = [];
