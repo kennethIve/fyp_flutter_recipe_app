@@ -31,7 +31,7 @@ dependencies:
   fluttertoast: ^4.0.0 #https://pub.dev/packages/fluttertoast
   animations: ^1.1.0 
   flutter_speed_dial: ^1.2.5
-  flappy_search_bar: ^1.4.1  
+  autocomplete_textfield: ^1.7.3
 
 dev_dependencies:
   flutter_test:

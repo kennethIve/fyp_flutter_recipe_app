@@ -1,6 +1,8 @@
 library model;
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
+
 //data model for a recipe 
 class Recipe{
   int recipeId;//recipe name
@@ -26,7 +28,7 @@ class Recipe{
   String resoureceUrl;
 
   Recipe(this.recipeId,this.title,this.description,this.image,this.rating,this.skillTerm,this.cookTime,this.dietTerm,this.resoureceUrl);
-
+  
   Recipe.empty();
   
   String getDuration(){
@@ -35,5 +37,20 @@ class Recipe{
 
   getRating() {
     return rating.toDouble();
+  }
+
+  factory Recipe.fromJson(Map<String,dynamic> recipe)
+  {
+    return Recipe(
+      recipe["recipe_id"],
+      recipe["title"],
+      recipe["description"],
+      recipe["image"],
+      recipe["rating"],
+      recipe["skill_term"],
+      recipe["cook_time"],
+      recipe["diet_term"],
+      recipe["resource_url"]
+    );
   }
 }

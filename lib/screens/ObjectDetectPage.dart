@@ -54,9 +54,8 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   @override
   void dispose(){    
     //ObjectRecognition?.close();
-    controller.stopImageStream();
     Tflite.close();
-    //controller?.dispose();
+    controller?.dispose();
     super.dispose();
   }
   
