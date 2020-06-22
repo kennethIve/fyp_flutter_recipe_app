@@ -139,7 +139,7 @@ class _ListPageState extends State < ListPage > {
   Widget build(BuildContext context) {
     
     ListView listBuilder = new ListView.builder(      
-      padding: EdgeInsets.only(top: 10),      
+      padding: EdgeInsets.only(top: 15),      
       itemCount: recipes.length,
       itemBuilder: (context, index) {                        
         return RecipeCard(recipe: recipes[index]);
@@ -147,41 +147,46 @@ class _ListPageState extends State < ListPage > {
     
     //load more tag at listview last page  
     return Scaffold(
-      backgroundColor: Color.fromRGBO(255, 255, 255, 0.9),
+      backgroundColor: commonBackground,      
       appBar: topBar(type: "listPage", search: () {return showSearch(context: context, delegate: DataSearch());}),
       //bottomNavigationBar: botBar,
       drawer: drawer.SideBar(),
       floatingActionButton: filterBtn(context),// form com_var
       bottomSheet: null,
-      body: RefreshIndicator(
-        onRefresh: refreshList,
-        color: Colors.amber,
-        child: new LoadMore(
-          child: listBuilder, 
-          onLoadMore: lazyLoad,
-          whenEmptyLoad: _isFirstLoad,
-          isFinish: noMore,
-          textBuilder: (status){
-            String text;
-            switch (status) {
-              case LoadMoreStatus.fail:
-                text = "Process fail, click to retry!";
-                break;
-              case LoadMoreStatus.idle:
-                text = "Waiting for more recipe~";
-                break;
-              case LoadMoreStatus.loading:
-                text = "Loading，please wait...";
-                break;
-              case LoadMoreStatus.nomore:
-                text = "No More Recipe Found!";
-                break;
-              default:
-                text = "";
-            }
-            return text;
-          },),
-        )
+      body: Stack(
+          children: [
+            RefreshIndicator(        
+              onRefresh: refreshList,
+              color: Colors.amber,
+              child: new LoadMore(
+                child: listBuilder, 
+                onLoadMore: lazyLoad,
+                whenEmptyLoad: _isFirstLoad,
+                isFinish: noMore,
+                textBuilder: (status){
+                  String text;
+                  switch (status) {
+                    case LoadMoreStatus.fail:
+                      text = "Process fail, click to retry!";
+                      break;
+                    case LoadMoreStatus.idle:
+                      text = "Waiting for more recipe~";
+                      break;
+                    case LoadMoreStatus.loading:
+                      text = "Loading，please wait...";
+                      break;
+                    case LoadMoreStatus.nomore:
+                      text = "No More Recipe Found!";
+                      break;
+                    default:
+                      text = "";
+                  }
+                  return text;
+                },
+              ),
+              ),
+           ]
+        ),
     );
   }
 
@@ -199,8 +204,18 @@ class DataSearch extends SearchDelegate {
   static List<Recipe> suggestionList = [];
   static String current;
 
-  DataSearch(): super(searchFieldLabel: "Search here",);
-
+  DataSearch(): super(
+    searchFieldLabel: "Search here",
+    searchFieldStyle: TextStyle(color:Colors.grey)
+  );
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return defaultTheme.copyWith(
+      primaryColor: Colors.white,
+      primaryIconTheme: defaultTheme.primaryIconTheme.copyWith(color: Colors.grey),      
+      textTheme: defaultTheme.textTheme.copyWith(headline6:defaultTheme.textTheme.headline6.copyWith(color:Colors.black,),),      
+    );
+  }
   @override
   List < Widget > buildActions(BuildContext context) {
     return [IconButton(icon: Icon(Icons.backspace), onPressed: () {
@@ -211,7 +226,7 @@ class DataSearch extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(icon: AnimatedIcon(icon: AnimatedIcons.menu_arrow, progress: transitionAnimation), onPressed: () {
-      close(context, null);
+      //close(context, null);
     }, );
   }
 
@@ -223,6 +238,7 @@ class DataSearch extends SearchDelegate {
 
   Future<ListView> getRecipeByKeyword() async{
     List list = await RecipeRest().getRecipeByKeyword(query);  
+    //List list = await RecipeRest().getAllRecipes();
     return ListView.builder(      
       padding: EdgeInsets.only(top: 10),
       itemCount: list.length,
@@ -230,14 +246,21 @@ class DataSearch extends SearchDelegate {
         return RecipeCard(recipe: list[index]);
       });
   }
-
   @override
   Widget buildSuggestions(BuildContext context) {
     showSuggestions(context);
-    debugPrint("show suggestion");
     if(query.isEmpty)
-      return Column(children:[Center(child: Text("You can find your recipe by name",textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color: Colors.blueGrey),))]);
-    return FutureBuilder(      
+      return 
+      Column(        
+        children:[
+          Center(
+            child: Text("Waiting for your input",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20,color: Colors.blueGrey),)
+          )
+        ]
+      );      
+    return FutureBuilder(
       future:getRecipeByKeyword(),
       builder: (BuildContext context,AsyncSnapshot snapshot){
         if (snapshot.connectionState == ConnectionState.done) {

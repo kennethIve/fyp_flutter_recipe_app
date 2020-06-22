@@ -5,81 +5,26 @@ import 'package:flutter/material.dart';
 
 //global variable
 String appName = 'Recipe';
-
-String sideBarName = 'Options';
-
-//common widgets
-topBar({String type,String title,Future<dynamic> search(),Color color}){
-  if(type == "listPage"){
-    return AppBar(
-          elevation: 0.5,
-          backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),
-          title: Text(appName),          
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: search,
-            )
-          ],
-        );
-  }else if(type == "custom"){
-    return AppBar(
-        elevation: 0.5,
-        backgroundColor: color != null?color:Color.fromRGBO(95, 144, 148, 0.9),        
-        title:Text(title),          
-        centerTitle: true,
-        actions: <Widget>[
-        ],
-      );
-  }
-  return AppBar(
-        elevation: 0.5,
-        backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),
-        title:Text(appName),          
-        centerTitle: true,
-        actions: <Widget>[
-        ],
-      );
-  
-}
-
-Widget botBar = Container(
-          height: 55.0,
-          child: BottomAppBar(
-            color: Color.fromRGBO(58, 66, 86, 1.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.home, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.blur_on, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.hotel, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.account_box, color: Colors.white),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-        );
-
+Color commonBackground = Colors.orange[50];
 ThemeData defaultTheme 
-= new ThemeData(
+= ThemeData(
   brightness: Brightness.light,
-  primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
+  backgroundColor: Color.fromRGBO(95, 144, 148, 0.9),//color like appbar
+  primaryColor: Color.fromRGBO(58, 66, 86, 1.0), //
+  iconTheme: IconThemeData(color: Colors.white),
+  textTheme: TextTheme(
+    headline6: TextStyle(color:Colors.white,fontSize: 18,fontFamily: 'Georgia'),
+    bodyText2: TextStyle(color:Colors.black87,),
+  ),
+  primaryTextTheme: TextTheme(    
+    headline1: TextStyle(color:Colors.red,fontSize: 18,fontFamily: 'Georgia'),
+    headline6: TextStyle(color:Colors.black,fontSize: 18,fontFamily: 'Georgia'),
+  ),
   fontFamily: 'Georgia',
 );
 
-//fillter dialogg
+//common widgets
+String sideBarName = 'Options';
 
 void showfilterModal(BuildContext context) async{
   TextStyle mystyle = TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0);
@@ -118,4 +63,46 @@ void showfilterModal(BuildContext context) async{
     ),
   );
   showDialog(context: context,builder: (BuildContext context) => dialog);
+}
+
+//fillter dialogg
+topBar({String type,String title,Future<dynamic> search(),Color color}){
+  if(type == "listPage"){
+    return AppBar(
+          elevation: 0.5,
+          backgroundColor: defaultTheme.backgroundColor,
+          iconTheme: defaultTheme.iconTheme,
+          textTheme: defaultTheme.textTheme,
+          title: Text(appName),          
+          centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: search,
+            )
+          ],
+        );
+  }else if(type == "custom"){
+    return AppBar(
+        elevation: 0.5,
+        backgroundColor: color != null?color:defaultTheme.backgroundColor,
+        iconTheme: defaultTheme.iconTheme,
+        textTheme: defaultTheme.textTheme,       
+        title:Text(title),          
+        centerTitle: true,
+        actions: <Widget>[
+        ],
+      );
+  }
+  return AppBar(
+        elevation: 0.5,
+        backgroundColor: color != null?color:defaultTheme.backgroundColor,
+        iconTheme: defaultTheme.iconTheme,
+        textTheme: defaultTheme.textTheme, 
+        title:Text(appName),          
+        centerTitle: true,
+        actions: <Widget>[
+        ],
+      );
+  
 }

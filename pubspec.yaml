@@ -51,6 +51,7 @@ flutter:
   assets:
     - assets/labelmap.txt
     - assets/detect.tflite
+    - assets/background.jpg 
     - google_fonts/
     - assets/google_fonts/
   # To add assets to your application, add an assets section, like this:

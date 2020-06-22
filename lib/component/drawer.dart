@@ -41,7 +41,7 @@ class _SideBarState extends State<SideBar> {
     //drawer header
     drawerOptions.add(Container(
         height: 90.0,
-        child: new DrawerHeader(child: word.drawerTitle(com.sideBarName),decoration: BoxDecoration(color: Color.fromRGBO(95, 144, 148, 1),),
+        child: new DrawerHeader(child: word.drawerTitle(com.sideBarName),decoration: BoxDecoration(color: com.defaultTheme.backgroundColor,),
         ),)
     );
     //loop create drawer option
@@ -53,7 +53,7 @@ class _SideBarState extends State<SideBar> {
         leading: Icon(d.icon),
         title: Text(
           d.title,
-          style: TextStyle(fontSize: 15.0),
+          style: com.defaultTheme.textTheme.headline1,
         ),        
         selected: i == _selectedIndex,        
         onTap: () => onSelectItem(i),
@@ -62,7 +62,7 @@ class _SideBarState extends State<SideBar> {
 
     return new Container(
       width: 250,
-      child: Drawer(
+      child: Drawer(      
         child: ListView(
           padding: EdgeInsets.zero,        
           children: drawerOptions

@@ -43,19 +43,36 @@ class _SearchPageState extends State<SearchPage> {
 
   final textFieldController = TextEditingController();//final myController = TextEditingController();
 
+  void addKeywords(){
+    setState(() {
+      if(textFieldController.text.length >0)
+        if(!keywordList.contains(textFieldController.text)){
+          keywordList.add(textFieldController.text);
+          textFieldController.clear();
+        }else
+          Fluttertoast.showToast(msg: "'"+textFieldController.text+"' already added",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    //change theme setting for this context
+    //Theme.of(context).copyWith(iconTheme: IconThemeData(color: Colors.red),);
     return Scaffold(
-      appBar: topBar(type: "custom",title: "Search"),
+      appBar: topBar(type: "custom",title: "Search",color: defaultTheme.backgroundColor),
       drawer: SideBar(),
-      backgroundColor: Colors.white,//Color.fromRGBO(58, 66, 86, 1.0),
-      bottomNavigationBar: BottomAppBar(
-        child: FlatButton(
-          onPressed: () { },
-          child: Icon(Icons.search),
-          )
+      backgroundColor: commonBackground,//Color.fromRGBO(58, 66, 86, 1.0),      
+      floatingActionButton: FloatingActionButton(
+        onPressed: () { },
+        child: Icon(Icons.search),
       ),
       body: Container(
         alignment: Alignment.topCenter,
@@ -114,34 +131,24 @@ class _SearchPageState extends State<SearchPage> {
       elevation: 8.0,
       child: Row(
         children: <Widget>[
-          Expanded(flex: 1, child: Icon(Icons.search),),
+          Expanded(flex: 2, child: Icon(Icons.search,color: Colors.black,),),      
           Expanded(
             flex: 8, 
             child: TextField(
               controller: textFieldController,
               style:TextStyle(color: Colors.grey,fontSize: 18.0),
               decoration: new InputDecoration(border:InputBorder.none,contentPadding: EdgeInsets.fromLTRB(5, 10, 0, 5)),
+              onSubmitted: (text){
+                addKeywords();
+              },
               )
             ),
           Expanded(flex: 2, 
-            child: FlatButton(child: Icon(Icons.add_circle),
-            onPressed: (){
-              setState(() {
-                if(textFieldController.text.length >0)
-                  if(!keywordList.contains(textFieldController.text))
-                    keywordList.add(textFieldController.text);
-                  else
-                    Fluttertoast.showToast(msg: "'"+textFieldController.text+"' already added",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.TOP,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0
-                    );
-              });
-              textFieldController.clear();
-            },))
+            child: IconButton(
+              icon: Icon(Icons.add_circle,color: Colors.black,),
+              onPressed: addKeywords,
+            )
+          ),
         ],
       ),
     );
@@ -176,10 +183,10 @@ class _SearchPageState extends State<SearchPage> {
   Widget keywordChip (String keyword,Color color){
     return new Chip(
       labelPadding: EdgeInsets.all(5.0),
-      avatar: CircleAvatar(backgroundColor: Colors.blueAccent,child: Text(keyword.substring(0,1)),), 
+      avatar: CircleAvatar(backgroundColor: Colors.orange,child: Text(keyword.substring(0,1),style: TextStyle(color: Colors.white),),), 
       label: Text(keyword),
       backgroundColor: color,
-      elevation: 5.0, 
+      elevation: 4.0, 
       onDeleted: () { 
         setState(() {
           keywordList.remove(keyword);
@@ -201,13 +208,15 @@ class _SearchPageState extends State<SearchPage> {
           leading: Icon(Icons.text_fields),
         ),
         Wrap(
-          alignment: WrapAlignment.spaceEvenly,
+          alignment: WrapAlignment.start,
           direction: Axis.horizontal,
           runSpacing: 5,
+          spacing: 5,
           children: List.generate(keywordList.length, (index){
             return keywordChip(keywordList[index], Colors.white);
           }),
         ),
+        Padding(padding: EdgeInsets.all(5),)
        ],
       ),
     );

@@ -10,7 +10,7 @@ class RecipeRest{
   //static String url = "http://192.168.1.99/api";
   static String token = "t1TkHac7Tugi4mY7u6lxyYKgp4uz8w34KRLY2Dgi";
 
-  static List<Recipe>recipes = [];
+  List<Recipe>recipes = [];
   RecipeRest();
 
   void dioAuth(){
