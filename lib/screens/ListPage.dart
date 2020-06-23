@@ -15,8 +15,10 @@ class ListPage extends StatefulWidget {
     Key key,
     this.title
   }): super(key: key);
+
   String title;
   int selected = -1;
+
   @override
   _ListPageState createState() => _ListPageState();
 }
@@ -35,8 +37,8 @@ class _ListPageState extends State < ListPage > {
 
   //var _orderOpts = ["none","alpha","time","star"];
   var filterStatus = [false,false,false];
-  var orderBy = ["rating","cook_time","title"];
-  var order = ["desc","desc","desc"];
+  var orderBy = ["title"];
+  var order = ["asc"];
 
   static int order_index = 0;
 
@@ -96,10 +98,15 @@ class _ListPageState extends State < ListPage > {
   }
   void filterClick(String fliter){
     _isFirstLoad = true;
-    var index = orderBy.indexOf(fliter);     
+
+    var index = orderBy.indexOf(fliter);
     try {
+      filterStatus[index] = !filterStatus[index];
       order[index] = order[index] != "desc" ? "desc":"asc"; 
-    } catch (e) {      
+    } catch (e) {
+      filterStatus = [false,false,false];
+      orderBy = ["title"];
+      order = ["asc"];
     }    
     refreshList();
   }
@@ -141,12 +148,12 @@ class _ListPageState extends State < ListPage > {
               },
             ),
             SpeedDialChild(
-              child: Icon(Icons.text_rotate_vertical),
+              child: Icon(Icons.replay),
               backgroundColor:Colors.blueGrey,
               label: 'Filter by',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
-                filterClick("title");
+                filterClick("reset");
               },
             ),
           ],
@@ -219,13 +226,13 @@ class _ListPageState extends State < ListPage > {
 //search button of the list page
 class DataSearch extends SearchDelegate {
 
-  static List < String > recipeNames = ["chicken"];
+  static List < String > recipeNames = [];
   static List<Recipe> suggestionList = [];
+  static List<Recipe> theListList = [];
   static String current;
 
   DataSearch(): super(
     searchFieldLabel: "Search here",
-    searchFieldStyle: TextStyle(color:Colors.grey)
   );
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -238,36 +245,45 @@ class DataSearch extends SearchDelegate {
   @override
   List < Widget > buildActions(BuildContext context) {
     return [IconButton(icon: Icon(Icons.backspace), onPressed: () {
-      super.query = "";
+      query = "";
     }, )];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(icon: AnimatedIcon(icon: AnimatedIcons.menu_arrow, progress: transitionAnimation), onPressed: () {
-      //close(context, null);
-    }, );
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow, 
+        progress: transitionAnimation
+      ), 
+      onPressed: () {
+        close(context, null);
+      }, 
+    );
   }
 
 
   @override
-  Widget buildResults(BuildContext context) {    
-    return buildSuggestions(context);    
+  Widget buildResults(BuildContext context) {//show result base on selection
+    return FutureBuilder(
+      future:getRecipeByKeyword(result: true),  
+      builder: (BuildContext context,AsyncSnapshot snapshot){
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {            
+            return Center(child:Text("Network Connection Fail"));
+          } else {            
+            return snapshot.data;
+          }
+        } else {          
+          return Center(child: CircularProgressIndicator(),);
+        }
+      }
+    );
   }
 
-  Future<ListView> getRecipeByKeyword() async{
-    List list = await RecipeRest().getRecipeByKeyword(query);  
-    //List list = await RecipeRest().getAllRecipes();
-    return ListView.builder(      
-      padding: EdgeInsets.only(top: 10),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        return RecipeCard(recipe: list[index]);
-      });
-  }
   @override
   Widget buildSuggestions(BuildContext context) {
-    showSuggestions(context);
+    //showSuggestions(context);    
     if(query.isEmpty)
       return 
       Column(        
@@ -280,7 +296,7 @@ class DataSearch extends SearchDelegate {
         ]
       );      
     return FutureBuilder(
-      future:getRecipeByKeyword(),
+      future:getRecipeByKeyword(),  
       builder: (BuildContext context,AsyncSnapshot snapshot){
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {            
@@ -295,5 +311,18 @@ class DataSearch extends SearchDelegate {
     );
   }
 
+  Future<ListView> getRecipeByKeyword({bool result=false}) async{
+    List<Recipe> suggestionList = await RecipeRest().getRecipeByKeyword(query,take: 20);
+    debugPrint("getrecipebykey build result"+suggestionList.length.toString());
+    return ListView.builder(      
+      padding: EdgeInsets.only(top: 10),
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {        
+        var title = suggestionList[index].title;
+        if(result)
+          return RecipeCard(recipe: suggestionList[index]);
+        return ListTile(leading: Icon(Icons.restaurant_menu),title: Text(title),onTap: (){query = title; showResults(context);},);
+      });
+  }
 
 }

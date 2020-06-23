@@ -74,13 +74,13 @@ class RecipeRest{
     }
   }
   //get recipe by title --->for search delegate user
-  Future<List<Recipe>> getRecipeByKeyword(String keyword) async {
+  Future<List<Recipe>> getRecipeByKeyword(String keyword,{int take=10}) async {
     if(keyword.isEmpty || keyword.length < 2)
       return[];
     try {
       dioAuth();
-      Response response = await dio.get("/getRecipesByName",queryParameters:{"words":keyword});      
-      debugPrint("RestCall --getRecipeByKeyword-- keyword:'$keyword' Status Code: "+response.statusCode.toString());
+      Response response = await dio.get("/getRecipesByName",queryParameters:{"words":keyword,"take":take});      
+      //debugPrint("RestCall --getRecipeByKeyword-- keyword:'$keyword' Status Code: "+response.statusCode.toString());
       //for testing
       List<Recipe> temp = _reponseToRecipe(response);
       return temp; 

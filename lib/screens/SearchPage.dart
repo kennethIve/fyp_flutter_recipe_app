@@ -35,7 +35,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _trailIcon = Icon(Icons.keyboard_arrow_right);
 
-  var _cookTime = 60.0;
+  RangeValues _cookTime = RangeValues(40.0, 210.0);
 
   var searhKey;
 
@@ -153,6 +153,19 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+  
+  String _cookTimeMessage(){
+    var start = _cookTime.start.round();
+    var end = _cookTime.end.round();
+    if(start == end){
+      if(start==10)
+        return "< $end";
+      else if(end == 250)
+        return "> $end";
+      return "~ $end";
+    }else
+      return "$start ~ $end";
+  }
 
   Widget durationBar() {
     return Card(
@@ -163,17 +176,18 @@ class _SearchPageState extends State<SearchPage> {
         ListTile(
           title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children:[
             Text("Cook Time",style:header),
-            Text('$_cookTime Mins',style:TextStyle(color:Colors.grey,fontSize:18.0,fontWeight:FontWeight.w400)),
+            Text(_cookTimeMessage()+' Mins',style:TextStyle(color:Colors.grey,fontSize:18.0,fontWeight:FontWeight.w400)),
           ]),
           leading: Icon(Icons.timer),
         ),
-        Slider(
-          min: 30,max: 300,value: _cookTime ,divisions: 27,label: '$_cookTime Mins',
-          onChanged: (value){
+        RangeSlider(
+          min: 10.0,max: 250.0  ,divisions: 21,
+          onChanged: (RangeValues value){
             setState(() {
               _cookTime = value;
             });
-          }
+          }, 
+          values: _cookTime,
         ),
        ],
       ),
