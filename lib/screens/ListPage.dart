@@ -32,7 +32,12 @@ class _ListPageState extends State < ListPage > {
   bool emptyload = true;
 
   static bool _visible = false;
-  var order_option = ["none","alpha","time","star"];
+
+  //var _orderOpts = ["none","alpha","time","star"];
+  var filterStatus = [false,false,false];
+  var orderBy = ["rating","cook_time","title"];
+  var order = ["desc","desc","desc"];
+
   static int order_index = 0;
 
   var _isFirstLoad = true;
@@ -53,7 +58,7 @@ class _ListPageState extends State < ListPage > {
     emptyload = true;
     noMore = false;    
     setState(() {});    
-    await RecipeRest().getAllRecipes(range: itemRange).then((list){
+    await RecipeRest().getAllRecipes(range: itemRange,orderBy: orderBy,order: order).then((list){
         recipes = list;    
       setState(() {
         emptyload = false;
@@ -66,9 +71,9 @@ class _ListPageState extends State < ListPage > {
   //for lazy load more
   Future <bool> lazyLoad() async {
     var before = recipes.length;
-    //await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(Duration(milliseconds: 1500));
     try{
-      await RecipeRest().getAllRecipes(start: before).then((list){
+      await RecipeRest().getAllRecipes(start: before,orderBy: orderBy,order: order).then((list){
         recipes.addAll(list);
         setState(() {});
         var after = recipes.length;
@@ -89,7 +94,15 @@ class _ListPageState extends State < ListPage > {
       widget.selected = index;
     });
   }
-
+  void filterClick(String fliter){
+    _isFirstLoad = true;
+    var index = orderBy.indexOf(fliter);     
+    try {
+      order[index] = order[index] != "desc" ? "desc":"asc"; 
+    } catch (e) {      
+    }    
+    refreshList();
+  }
   Widget filterBtn (BuildContext context){
       return SpeedDial(
           // both default to 16
@@ -98,7 +111,7 @@ class _ListPageState extends State < ListPage > {
           animatedIcon: AnimatedIcons.menu_close,
           animatedIconTheme: IconThemeData(size: 22.0),
           closeManually: false,
-          curve: Curves.bounceIn,
+          curve: Curves.easeInExpo,
           //overlayColor: Colors.black,
           visible: !emptyload,
           overlayOpacity: 0.5,
@@ -114,21 +127,27 @@ class _ListPageState extends State < ListPage > {
               backgroundColor:Colors.blueGrey,
               //label: 'Time',
               labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {}
+              onTap: () {
+                filterClick("cook_time");
+              }
             ),
             SpeedDialChild(
               child: Icon(Icons.star),
-              backgroundColor:Colors.blueGrey,
+              backgroundColor:Colors.green,
               //label: 'Star',
               labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {},
+              onTap: () {
+                filterClick("rating");
+              },
             ),
             SpeedDialChild(
               child: Icon(Icons.text_rotate_vertical),
               backgroundColor:Colors.blueGrey,
               label: 'Filter by',
               labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {},
+              onTap: () {
+                filterClick("title");
+              },
             ),
           ],
         );

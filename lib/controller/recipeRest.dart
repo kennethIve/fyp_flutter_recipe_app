@@ -13,26 +13,37 @@ class RecipeRest{
   List<Recipe>recipes = [];
   RecipeRest();
 
-  void dioAuth(){
+  void dioAuth({bool needAuth = false}){
       dio.options.baseUrl = url;
       dio.options.connectTimeout =15000;
       dio.options.receiveTimeout = 10000;
       dio.options.headers["Content-Type"] = 'application/json';
-      dio.options.headers["Authorization"] = token;
+      if (needAuth) {        
+        dio.options.headers["Authorization"] = token;  
+      }else{
+        dio.options.headers["Authorization"] = "";  
+      }
   }
-  Future<List<Recipe>> getAllRecipes({int range = 5,int start = 0}) async {
-    try {
-      dioAuth();
-      Map<String, dynamic> data={"start":start,"take":range};
-      Response response = await dio.get("/getRecipes",queryParameters: data);//testing api
-      //Response response = await dio.get("http://www.google.com");
-      List<Recipe> result =[];
-      for(var recipe in response.data){
+  List<Recipe> _reponseToRecipe(Response response)
+  {
+    List<Recipe> result =[];
+    for(var recipe in response.data){
         result.add(new Recipe(
           recipe["recipe_id"],recipe["title"],recipe["description"],recipe["image"],
           recipe["rating"],recipe["skill_term"],recipe["cook_time"],recipe["diet_term"],recipe["resource_url"],
         ));
       }
+    return result;
+  }
+  //mainly for list page  
+  Future<List<Recipe>> getAllRecipes({int range = 5,int start = 0, List orderBy = const [], List order = const [] }) async {
+    try {
+      dioAuth(needAuth: true);
+      Map<String, dynamic> data={"start":start,"take":range,"orderBy":orderBy,"order":order};
+      print(data);
+      Response response = await dio.get("/getRecipes",queryParameters: data);//testing api
+      //Response response = await dio.get("http://www.google.com");
+      List<Recipe> result = _reponseToRecipe(response);
       return result; 
     } on DioError catch(e) {
         if(e.response != null) {
@@ -62,19 +73,16 @@ class RecipeRest{
       return [];
     }
   }
-
+  //get recipe by title --->for search delegate user
   Future<List<Recipe>> getRecipeByKeyword(String keyword) async {
-    if(keyword.isEmpty)
+    if(keyword.isEmpty || keyword.length < 2)
       return[];
-    try {      
-      Response response = await dio.get("http://www.google.com",queryParameters:{"keyword":keyword});      
-      debugPrint("RestCall --getRecipeByKeyword-- keyword:$keyword Status Code: "+response.statusCode.toString());
+    try {
+      dioAuth();
+      Response response = await dio.get("/getRecipesByName",queryParameters:{"words":keyword});      
+      debugPrint("RestCall --getRecipeByKeyword-- keyword:'$keyword' Status Code: "+response.statusCode.toString());
       //for testing
-      List<Recipe> temp = [];
-      recipes.forEach((recipe){
-        if(recipe.title.contains(keyword))
-          temp.add(recipe);
-      });      
+      List<Recipe> temp = _reponseToRecipe(response);
       return temp; 
     } catch (e) {
       debugPrint(e);      

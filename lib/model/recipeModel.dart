@@ -32,7 +32,13 @@ class Recipe{
   Recipe.empty();
   
   String getDuration(){
-    return (cookTime/60).toString();
+    //return (cookTime/60).toString();
+    var duration = (cookTime/60).round();
+    if(duration < 10)
+      return " < 10";
+    else if(duration > 240)
+      return " > 240";
+    return duration.toString();
   }
 
   getRating() {
