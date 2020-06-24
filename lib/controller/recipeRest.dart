@@ -24,15 +24,26 @@ class RecipeRest{
         dio.options.headers["Authorization"] = "";  
       }
   }
+  //common function to change json to recipe model
   List<Recipe> _reponseToRecipe(Response response)
   {
     List<Recipe> result =[];
-    for(var recipe in response.data){
-        result.add(new Recipe(
-          recipe["recipe_id"],recipe["title"],recipe["description"],recipe["image"],
-          recipe["rating"],recipe["skill_term"],recipe["cook_time"],recipe["diet_term"],recipe["resource_url"],
-        ));
+    for(var recipe in response.data)
+    {
+      Recipe temp = new Recipe(
+        recipe["recipe_id"],recipe["title"],recipe["description"],recipe["image"],
+        recipe["rating"],recipe["skill_term"],recipe["cook_time"],recipe["diet_term"],recipe["resource_url"],
+      );
+      for(var ingredient in recipe["ingredients"])
+      {
+        temp.ingredients.add(Ingredient.fromJson(ingredient));
       }
+      for(var step in recipe["steps"])
+      {
+        //temp.ingredients.add(Ingredient.fromJson(ingredient));
+      }
+      result.add(temp);
+    }    
     return result;
   }
   //mainly for list page  

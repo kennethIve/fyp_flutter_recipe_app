@@ -19,7 +19,7 @@ class Recipe{
 
   List<String>steps; //recipe steps
 
-  List<String>ingredients; //recipe ingredients
+  List<Ingredient>ingredients = []; //recipe ingredients
 
   String image = 'https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/chorizo-mozarella-gnocchi-bake-cropped.jpg';
 
@@ -58,5 +58,31 @@ class Recipe{
       recipe["diet_term"],
       recipe["resource_url"]
     );
+  }  
+}
+
+class Ingredient {
+  int recipeIngredientsId;
+  int recipeId;
+  int sequence;
+  String content;
+
+  Ingredient(
+      {this.recipeIngredientsId, this.recipeId, this.sequence, this.content});
+
+  Ingredient.fromJson(Map<String, dynamic> json) {
+    recipeIngredientsId = json['recipe_ingredients_id'];
+    recipeId = json['recipe_id'];
+    sequence = json['sequence'];
+    content = json['content'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['recipe_ingredients_id'] = this.recipeIngredientsId;
+    data['recipe_id'] = this.recipeId;
+    data['sequence'] = this.sequence;
+    data['content'] = this.content;
+    return data;
   }
 }
