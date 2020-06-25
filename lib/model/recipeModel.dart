@@ -1,8 +1,6 @@
 library model;
 import 'dart:core';
 
-import 'package:flutter/foundation.dart';
-
 //data model for a recipe 
 class Recipe{
   int recipeId;//recipe name
@@ -17,7 +15,7 @@ class Recipe{
 
   String description; //recipe description
 
-  List<String>steps; //recipe steps
+  List<Steps> steps = []; //recipe steps
 
   List<Ingredient>ingredients = []; //recipe ingredients
 
@@ -85,4 +83,33 @@ class Ingredient {
     data['content'] = this.content;
     return data;
   }
+
+  String getSeq(){ return (sequence+1).toString(); }
 }
+
+class Steps {
+  int stepsId;
+  int recipeId;
+  int sequence;
+  String description;
+
+  Steps({this.stepsId, this.recipeId, this.sequence, this.description});
+
+  Steps.fromJson(Map<String, dynamic> json) {
+    stepsId = json['steps_id'];
+    recipeId = json['recipe_id'];
+    sequence = json['sequence'];
+    description = json['description'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['steps_id'] = this.stepsId;
+    data['recipe_id'] = this.recipeId;
+    data['sequence'] = this.sequence;
+    data['description'] = this.description;
+    return data;
+  }
+  String getSeq(){ return (sequence+1).toString(); }
+}
+

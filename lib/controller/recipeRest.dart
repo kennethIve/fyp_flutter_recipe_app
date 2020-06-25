@@ -1,4 +1,5 @@
 library restcall;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe/model/recipeModel.dart';
@@ -40,7 +41,7 @@ class RecipeRest{
       }
       for(var step in recipe["steps"])
       {
-        //temp.ingredients.add(Ingredient.fromJson(ingredient));
+        temp.steps.add(Steps.fromJson(step));
       }
       result.add(temp);
     }    

@@ -106,3 +106,4 @@ topBar({String type,String title,Future<dynamic> search(),Color color}){
       );
   
 }
+TextStyle header = TextStyle(fontSize:18.0,fontWeight:FontWeight.w800);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe/model/recipeModel.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../com_var.dart';
 
@@ -9,9 +10,12 @@ class RecipeDetailPage extends StatelessWidget {
   
 
   
+
+  
   const RecipeDetailPage({Key key, this.title, this.recipe}) : super(key: key);
   final String title;
   final Recipe recipe;
+  static var _scrollController = ScrollController();
 
   final double cardRadius = 15.0;
   static const double fontSize = 15.0;
@@ -36,12 +40,13 @@ class RecipeDetailPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10),
             //color: Colors.transparent,
             child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
                     child: Card(
                       elevation: 5,
                       //borderOnForeground: true,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(cardRadius)),
                       margin: EdgeInsets.all(10),
-                      child: Column(
+                      child: Column(                      
                       children:[
                         ClipRRect(
                           borderRadius: BorderRadius.vertical(top:Radius.circular(cardRadius),),
@@ -59,30 +64,34 @@ class RecipeDetailPage extends StatelessWidget {
                           title: Text(recipe.title,style: GoogleFonts.notoSerif(textStyle: TextStyle(fontStyle: FontStyle.italic,fontSize: 18,fontWeight: FontWeight.bold,)),textAlign: TextAlign.start,softWrap: true,),
                           subtitle: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            
+                            crossAxisAlignment: CrossAxisAlignment.end, 
                             children:[
                               SmoothStarRating(starCount: 5,rating: recipe.getRating(),isReadOnly: true,size: fontSize,color: Colors.orange,),
                               time(),
                               skillTerm(),
-                            ]
+                            ],                            
                           ),
                           children: [
                             Padding(
                               padding: EdgeInsets.fromLTRB(15, 0, 15, 5),
                               child: desc(),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                FlatButton(onPressed: _launchURL,child: Text('Details',style: TextStyle(color:Colors.blue),),)
+                              ],
+                            ),
                           ],
+                          initiallyExpanded: true,
                         ),
-                        ExpansionTile(title: Text("Ingredients")),
                         ExpansionTile(
+                          title: Text("Ingredients"),
+                          children: [ingredientList()],
+                        ),
+                        ExpansionTile(                          
                           title: Text("Steps"),
-                          children: [
-                            desc(),
-                            desc(),
-                            desc(),
-                            desc(),
-                          ],
+                          children: [steps()],
                         ),
                       ], 
                 ),
@@ -133,11 +142,69 @@ class RecipeDetailPage extends StatelessWidget {
         ),
       )
     );
+  
   }
   Widget ingredientList(){
-    return ListView.builder(
+    return new ListView.builder(
+      shrinkWrap: true,
+      controller: _scrollController,
       itemCount: recipe.ingredients.length,
-      itemBuilder: (context,index){}
+      itemBuilder: (context,index){
+        Ingredient temp = recipe.ingredients[index];
+        return ListTile(
+          leading: CircleAvatar(child: Text(temp.getSeq()),),
+          title:Text(
+            temp.content,
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              wordSpacing: 1.5,
+            )
+          ),
+        );
+      }
     );
   }
+
+  Widget steps(){
+    return new ListView.builder(
+      shrinkWrap: true,      
+      controller: _scrollController,
+      itemCount: recipe.steps.length,
+      itemBuilder: (context,index){
+        Steps temp = recipe.steps[index];
+        return ListTile(
+          leading: CircleAvatar(
+            child: Text(
+              temp.getSeq(),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                wordSpacing: 1.5,
+              ),
+            ),
+          ),
+          title:Text(
+            temp.description,
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              wordSpacing: 1.5,
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  _launchURL() async {
+    String url = recipe.resoureceUrl;
+    debugPrint(url);
+    if (await canLaunch(url)) 
+    {
+      await launch(url);
+    } 
+    else 
+    {
+      throw 'Could not launch $url';
+    }
+  }
+  
 } 

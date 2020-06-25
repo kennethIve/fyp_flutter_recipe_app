@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe/com_var.dart';
 import 'package:recipe/component/drawer.dart';
 import 'package:recipe/model/recipeModel.dart';
+import 'package:recipe/screens/SearchPageList.dart';
 
 
 
@@ -70,9 +71,12 @@ class _SearchPageState extends State<SearchPage> {
       appBar: topBar(type: "custom",title: "Search",color: defaultTheme.backgroundColor),
       drawer: SideBar(),
       backgroundColor: commonBackground,//Color.fromRGBO(58, 66, 86, 1.0),      
-      floatingActionButton: FloatingActionButton(
-        onPressed: () { },
+      floatingActionButton: FloatingActionButton(        
         child: Icon(Icons.search),
+        onPressed: () {
+          //make a query and pass to searh page list page          
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchPageList(query: {},)));
+        },
       ),
       body: Container(
         alignment: Alignment.topCenter,
