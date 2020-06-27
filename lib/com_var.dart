@@ -46,7 +46,7 @@ void showfilterModal(BuildContext context) async{
             child: Wrap(),
           ),
          Flex(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,            
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             direction: Axis.horizontal,
             children:[
               Expanded(

@@ -55,13 +55,19 @@ class _SearchPageListState extends State < SearchPageList > {
     refreshList();
   }
 
+  _queryBuilder(){
+    var temp = widget.query;
+    temp["start"] = recipes.length;
+    return temp;
+  }
   //for load and refresh  
   Future<void> refreshList() async {    
     recipes = new List() ;    
     emptyload = true;
     noMore = false;    
-    setState(() {});    
-    await RecipeRest().getAllRecipes(range: itemRange,orderBy: orderBy,order: order).then((list){
+    setState(() {});
+    var query = _queryBuilder();
+    await RecipeRest().detailSearch(query).then((list){
         recipes = list;    
       setState(() {
         emptyload = false;
@@ -76,7 +82,9 @@ class _SearchPageListState extends State < SearchPageList > {
     var before = recipes.length;
     await Future.delayed(Duration(milliseconds: 1500));
     try{
-      await RecipeRest().getAllRecipes(start: before,orderBy: orderBy,order: order).then((list){
+      var query = _queryBuilder();
+      //print(query);
+      await RecipeRest().detailSearch(query).then((list){
         recipes.addAll(list);
         setState(() {});
         var after = recipes.length;

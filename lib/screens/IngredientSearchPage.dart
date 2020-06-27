@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe/com_var.dart';
 import 'package:recipe/component/drawer.dart';
 import 'package:recipe/model/recipeModel.dart';
@@ -24,25 +26,42 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
     "assets/ingreLogo/SeaFood.png",
     "assets/ingreLogo/Vegetables.png",
   ];
-
+  final List ingredientList = [
+    ["apple","banana"],//fruit
+    ["beef","chicken"],//meat
+    ["shrimp","tuna"],//seafood
+    ["eggplant","carrot","tomato","cabbage"],//vegetables
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
           appBar: topBar(type: "custom",title: "Ingredient Search"),
           drawer: SideBar(),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: Icon(Icons.camera_enhance),
+            onPressed: () {
+              availableCameras().then((cameras) async {
+                List<String> result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>ObjectDetectPage(cameras: cameras,)));
+                if(result != null && result.length > 0){
+                  //ingredients.addAll(result);
+                  for(String ingre in result){
+                    if(ingredients.contains(ingre))
+                      continue;
+                    ingredients.add(ingre);
+                  }
+                }
+                setState(() {});
+              });                         
+            },
+          ),
           bottomNavigationBar: BottomAppBar(
             child: IconButton(
               color: defaultTheme.primaryColor,
-              icon: Icon(Icons.camera), 
-              onPressed: () async {
-                ingredients.add("hello");
-                setState(() {
-                  
-                });
-                // await availableCameras().then((cameras){
-                //   Navigator.push(context, MaterialPageRoute(builder: (context)=>ObjectDetectPage(cameras: cameras,)));
-                // });                
+              icon: Icon(Icons.search), 
+              onPressed: (){
+                                
               }
             ),
           ),
@@ -76,7 +95,10 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
                             Text(_gridImg[index].split("/").last.split(".").first),
                           //),
                         ),
-                       onTap: (){},
+                        onTap: (){ 
+                          debugPrint(index.toString());
+                          showfilterModal(context,index);
+                        },
                       )
                       ).toList(),
                     ),
@@ -132,4 +154,43 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
     );
   }
 
+  void showfilterModal(BuildContext context,int index) async{
+  TextStyle mystyle = TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0);
+  ShapeBorder shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0));
+  List tempList = ingredients;
+  List ingre = ingredientList[index];
+  //ingre.removeWhere((element) => tempList.contains(element));
+  Dialog dialog = Dialog(
+    //backgroundColor: Colors.yellow[50],
+    shape: shape,
+    insetPadding: EdgeInsets.fromLTRB(5, 5, 5, 0),        
+    child: Container(
+      color: Colors.transparent,
+      height: MediaQuery.of(context).size.height * .5,
+      width: MediaQuery.of(context).size.width * .6,
+      child: SingleChildScrollView(
+        child: ListView.builder(
+          shrinkWrap: true,
+          controller: _scrollController,
+          itemCount: ingre.length,
+          itemBuilder: (context,i){            
+            return ListTile(
+              leading: Icon(Icons.restaurant_menu),
+              title: Text(ingre[i],style: mystyle,),
+              trailing: Icon(Icons.add_circle_outline),
+              onTap: (){
+                if(!ingredients.contains(ingre[i])){
+                  ingredients.add(ingre[i]);
+                }else
+                  Fluttertoast.showToast(msg: ingre[i]+" is added");
+                setState(() {});
+              },
+            );
+          }
+          ),
+        )        
+      )
+  );
+  showDialog(context: context,builder: (BuildContext context) => dialog);
+  }
 }

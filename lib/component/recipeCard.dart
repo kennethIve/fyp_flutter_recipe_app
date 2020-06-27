@@ -53,13 +53,13 @@ class RecipeCard extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,      
-      children: <Widget>[
-        
-        Container(
-          padding: EdgeInsets.only(top:10),
-          child: Image.network(recipe.image,
-            height: 200,
-            width: 300,
+      children: <Widget>[        
+        ClipRRect(
+          //padding: EdgeInsets.only(top:10),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(5.0),topRight: Radius.circular(5.0),),
+          child: Image.network(recipe.image,            
+            //height: 200,
+            //width: 300,
             fit: BoxFit.cover,
             loadingBuilder: (context,child,progress){
             if (progress == null) return child; 

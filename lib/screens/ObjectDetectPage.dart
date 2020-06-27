@@ -30,6 +30,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   int btn = 1;
   bool isDetecting = false;
   List<dynamic> ingredients=[];
+  List<String> results = [];
   CameraController controller;
   bool scan_flag = false;
 
@@ -44,9 +45,9 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     controller.initialize().then((_) {
       if (!mounted) {
         return;
+      }else{
+        doRecognition();
       }
-      //setState(() {});
-      doRecognition();      
     });
   }
 
@@ -54,7 +55,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   @override
   void dispose(){    
     //ObjectRecognition?.close();
-    Tflite.close();
+    //Tflite.close();    
     controller?.dispose();
     super.dispose();
   }
@@ -66,8 +67,11 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   }
   
   void doRecognition() {
+    if(!mounted)
+      return;
     controller.startImageStream((CameraImage img){
-      setState(() {});
+      if(mounted)
+        setState(() {});
       //object detection code
       if(scan_flag){
         if(!isDetecting){
@@ -86,12 +90,15 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             if(recognitons.length>0){
               ingredients = recognitons.toList();
               debugPrint(recognitons.toList()[0].toString());
+              String detected = recognitons[0]["detectedClass"].toString();
+              if(!results.contains(detected)){          
+                results.add(detected);
+              }
             }
             //setState(() {});           
             //int endTime = new DateTime.now().millisecondsSinceEpoch;
             //int duration = endTime-startTime;            
             //debugPrint("run finish, process take:$duration");
-            
             isDetecting = false;              
           });                       
         }          
@@ -106,8 +113,15 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     if (controller == null || !controller.value.isInitialized) {
       return Container();
     }    
-    return Material(
-          child: Column(
+    return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.indigoAccent,
+            child: Icon(Icons.add),
+            onPressed: (){
+              Navigator.pop(context,results);
+            },
+          ),
+          body: Column(
           mainAxisAlignment: MainAxisAlignment.start,          
           children: <Widget>[
             Container(
@@ -146,9 +160,13 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
               width: screen.width,
               height: (screen.height/5)*2,
               child: ListView.builder(
-                itemCount: ingredients.length,
+                itemCount: results.length,
                 itemBuilder: (BuildContext context, int index) {
-                return ListTile(title:new Text(ingredients[index]["detectedClass"].toString()));
+                //return ListTile(title:new Text(ingredients[index]["detectedClass"].toString()));
+                return ListTile(
+                  leading: Icon(Icons.restaurant_menu),
+                  title:new Text(results[index]),
+                  );
               },
               ),
             ),

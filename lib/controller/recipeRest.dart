@@ -74,17 +74,6 @@ class RecipeRest{
       
   }
 
-   Future<List<Recipe>> getNextSetRecips({index:int}) async {
-    try {
-      Response response = await dio.get("http://www.google.com");
-      response.toString();
-      List<Recipe> temp = recipes.sublist(index,index+5);         
-      return temp; 
-    } catch (e) {
-      print(e);      
-      return [];
-    }
-  }
   //get recipe by title --->for search delegate user
   Future<List<Recipe>> getRecipeByKeyword(String keyword,{int take=10}) async {
     if(keyword.isEmpty || keyword.length < 2)
@@ -100,7 +89,39 @@ class RecipeRest{
       debugPrint(e);      
       return recipes;
     }
-      
   }
-
+  Future<List<Recipe>> detailSearch(Map<String,dynamic> query) async{
+    try {
+      dioAuth(needAuth: true);
+      Response response = await dio.post("/search",queryParameters: query);
+      //print(response.data["data"]);
+      List<Recipe> temp = _queryResponseToRecipe(response);
+      return temp;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+  
+  List<Recipe> _queryResponseToRecipe(Response response)
+  {
+    List<Recipe> result =[];
+    for(var recipe in response.data["data"])
+    {
+      Recipe temp = new Recipe(
+        recipe["recipe_id"],recipe["title"],recipe["description"],recipe["image"],
+        recipe["rating"],recipe["skill_term"],recipe["cook_time"],recipe["diet_term"],recipe["resource_url"],
+      );
+      for(var ingredient in recipe["ingredients"])
+      {
+        temp.ingredients.add(Ingredient.fromJson(ingredient));
+      }
+      for(var step in recipe["steps"])
+      {
+        temp.steps.add(Steps.fromJson(step));
+      }
+      result.add(temp);
+    }    
+    return result;
+  }
 }

@@ -23,9 +23,10 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
-  int sortBy = 0;
+  static int sortBy = 0;
   List sortByOptionLeading = [Icon(Icons.sort_by_alpha),Icon(Icons.timer),Icon(Icons.score)];
   List sortByOptions = ["Recipe Title","Cooking Time","Rating"];
+  List<String> sortList = ["title asc","cook_time asc","rating desc"];
   List option = ["Fast","Normal"];
   static List keywordList = [];
   TextStyle header = TextStyle(fontSize:18.0,fontWeight:FontWeight.w800);
@@ -62,6 +63,15 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  Map<String,dynamic> _queryBuilder(){
+    return {
+      "from":_cookTime.start.toInt(),
+      "to":_cookTime.end.toInt(),
+      "orderBy":[sortList[sortBy]],
+      "keywords":keywordList
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
@@ -74,8 +84,8 @@ class _SearchPageState extends State<SearchPage> {
       floatingActionButton: FloatingActionButton(        
         child: Icon(Icons.search),
         onPressed: () {
-          //make a query and pass to searh page list page          
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchPageList(query: {},)));
+          //make a query and pass to searh page list page
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchPageList(query: _queryBuilder(),)));
         },
       ),
       body: Container(
