@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe/com_var.dart';
 import 'package:recipe/component/drawer.dart';
 import 'package:recipe/model/recipeModel.dart';
+import 'package:recipe/screens/SearchPageList.dart';
 
 import 'ObjectDetectPage.dart';
 
@@ -32,6 +33,26 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
     ["shrimp","tuna"],//seafood
     ["eggplant","carrot","tomato","cabbage"],//vegetables
   ];
+
+  var textFieldController = TextEditingController();
+  void addIngredients(){
+    setState(() {
+      if(textFieldController.text.length >0)
+        if(!ingredients.contains(textFieldController.text)){
+          ingredients.add(textFieldController.text);
+          textFieldController.clear();
+        }else
+          Fluttertoast.showToast(msg: "'"+textFieldController.text+"' already added",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -61,7 +82,8 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
               color: defaultTheme.primaryColor,
               icon: Icon(Icons.search), 
               onPressed: (){
-                                
+                print(_queryBuilder());
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchPageList(query: _queryBuilder(),ingredientSearch: true,)));
               }
             ),
           ),
@@ -73,6 +95,7 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
               controller: _scrollController,
               child: Column(
                 children: <Widget>[
+                  searchBar(),
                   ingredientBar(),
                   Card(
                     child:Text("Categories"),
@@ -111,7 +134,35 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
         ),
     );
   }
-
+  Widget searchBar(){
+    bool barEmpty = true;
+    return Card(
+      semanticContainer: false,
+      elevation: 8.0,
+      child: Row(
+        children: <Widget>[
+          Expanded(flex: 2, child: Icon(Icons.search,color: Colors.black,),),      
+          Expanded(
+            flex: 8, 
+            child: TextField(
+              controller: textFieldController,
+              style:TextStyle(color: Colors.grey,fontSize: 18.0),
+              decoration: new InputDecoration(border:InputBorder.none,contentPadding: EdgeInsets.fromLTRB(5, 10, 0, 5)),
+              onSubmitted: (text){
+                addIngredients();
+              },
+              )
+            ),
+          Expanded(flex: 2, 
+            child: IconButton(
+              icon: Icon(Icons.add_circle,color: Colors.black,),
+              onPressed: addIngredients,
+            )
+          ),
+        ],
+      ),
+    );
+  }
   Widget ingredientBar() {
     return Card(
       elevation: 8,
@@ -192,5 +243,15 @@ class _IngredientSearchPageState extends State<IngredientSearchPage> {
       )
   );
   showDialog(context: context,builder: (BuildContext context) => dialog);
+  }
+
+  Map<String,dynamic> _queryBuilder(){
+    return {
+      "from":0,
+      "to":600,
+      "orderBy":["rating desc"],
+      //"keywords":keywordList.length>0?keywordList:[""]
+      "ingredients":ingredients.length > 0 ? ingredients:[]
+    };
   }
 }

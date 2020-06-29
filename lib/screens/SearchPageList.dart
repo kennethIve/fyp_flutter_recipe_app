@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loadmore/loadmore.dart';
@@ -15,10 +16,12 @@ class SearchPageList extends StatefulWidget {
     Key key,
     this.title,
     this.query,
+    this.ingredientSearch = false,
   }): super(key: key);
   Map<String,dynamic> query;
   String title;
   int selected = -1;
+  bool ingredientSearch = false;
 
   @override
   _SearchPageListState createState() => _SearchPageListState();
@@ -54,7 +57,7 @@ class _SearchPageListState extends State < SearchPageList > {
     _isFirstLoad = true;
     refreshList();
   }
-
+  //for lazy load the next 5 new record if exist
   _queryBuilder(){
     var temp = widget.query;
     temp["start"] = recipes.length;
@@ -67,7 +70,7 @@ class _SearchPageListState extends State < SearchPageList > {
     noMore = false;    
     setState(() {});
     var query = _queryBuilder();
-    await RecipeRest().detailSearch(query).then((list){
+    await RecipeRest().detailSearch(query,ingredientSearch: widget.ingredientSearch).then((list){
         recipes = list;    
       setState(() {
         emptyload = false;
@@ -84,7 +87,7 @@ class _SearchPageListState extends State < SearchPageList > {
     try{
       var query = _queryBuilder();
       //print(query);
-      await RecipeRest().detailSearch(query).then((list){
+      await RecipeRest().detailSearch(query,ingredientSearch: widget.ingredientSearch).then((list){
         recipes.addAll(list);
         setState(() {});
         var after = recipes.length;
@@ -179,7 +182,9 @@ class _SearchPageListState extends State < SearchPageList > {
       itemBuilder: (context, index) {                        
         return RecipeCard(recipe: recipes[index]);
       });
-    
+    if(recipes.length == 0)
+      listBuilder = ListView(
+        children: [ListTile(title:Text(""),)],);
     //load more tag at listview last page  
     return Scaffold(
       backgroundColor: commonBackground,      

@@ -28,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
   List sortByOptions = ["Recipe Title","Cooking Time","Rating"];
   List<String> sortList = ["title asc","cook_time asc","rating desc"];
   List option = ["Fast","Normal"];
-  static List keywordList = [];
+  static List keywordList = new List();
   TextStyle header = TextStyle(fontSize:18.0,fontWeight:FontWeight.w800);
 
   bool expanded = false;
@@ -68,7 +68,7 @@ class _SearchPageState extends State<SearchPage> {
       "from":_cookTime.start.toInt(),
       "to":_cookTime.end.toInt(),
       "orderBy":[sortList[sortBy]],
-      "keywords":keywordList
+      "keywords":keywordList.length>0?keywordList:[""]
     };
   }
 

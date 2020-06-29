@@ -90,10 +90,16 @@ class RecipeRest{
       return recipes;
     }
   }
-  Future<List<Recipe>> detailSearch(Map<String,dynamic> query) async{
+  Future<List<Recipe>> detailSearch(Map<String,dynamic> query,{bool ingredientSearch = false}) async{
     try {
       dioAuth(needAuth: true);
-      Response response = await dio.post("/search",queryParameters: query);
+      Response response;
+      print(query);
+      print("detail Search : is ingredient search: $ingredientSearch");
+      if(ingredientSearch)
+        response = await dio.post("/ingredientSearch",queryParameters: query);
+      else
+        response = await dio.post("/search",queryParameters: query);      
       //print(response.data["data"]);
       List<Recipe> temp = _queryResponseToRecipe(response);
       return temp;
@@ -103,6 +109,19 @@ class RecipeRest{
     }
   }
   
+  Future<List<Recipe>> ingredientSearch(Map<String,dynamic> query) async{
+    try {
+      dioAuth(needAuth: true);
+      Response response = await dio.post("/ingredientSearch",queryParameters: query);
+      //print(response.data["data"]);
+      List<Recipe> temp = _queryResponseToRecipe(response);
+      return temp;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+
   List<Recipe> _queryResponseToRecipe(Response response)
   {
     List<Recipe> result =[];
