@@ -8,9 +8,8 @@ class BBox extends StatelessWidget {
   final int previewW;
   final double screenH;
   final double screenW;
-  final String model;
 
-  BBox(this.previewH, this.previewW, this.screenH, this.screenW, this.model, this.results,);
+  BBox(this.results, this.previewH, this.previewW, this.screenH, this.screenW,);
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +54,7 @@ class BBox extends StatelessWidget {
                 width: 3.0,
               ),
             ),
-            child: Text(
-              "${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",
+            child: Text("${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",
               style: TextStyle(
                 color: Color.fromRGBO(37, 213, 253, 1.0),
                 fontSize: 14.0,
@@ -134,7 +132,7 @@ class BBox extends StatelessWidget {
     }
 
     return Stack(
-      children: _renderStrings()          
+      children: _renderBoxes(),
     );
   }
 }

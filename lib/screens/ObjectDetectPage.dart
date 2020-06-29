@@ -26,13 +26,25 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
   // List<dynamic> _recognition;
   // int _imageHeight = 0;
   // int _imageWidth = 0;
-  String _model = "";
+  String _model = "mobilenet";
   int btn = 1;
   bool isDetecting = false;
   List<dynamic> ingredients=[];
   List<String> results = [];
   CameraController controller;
   bool scan_flag = false;
+
+  static List<dynamic> _recognitions;
+  static int _imageHeight = 0;
+  static int _imageWidth = 0;
+
+  setRecognitions(recognitions, imageHeight, imageWidth) {
+    setState(() {
+      _recognitions = recognitions;
+      _imageHeight = imageHeight;
+      _imageWidth = imageWidth;
+    });
+  }
 
   @override
   void initState() { 
@@ -41,7 +53,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     scan_flag = false;
     initModel();
     //load a camera to camera chotroller
-    controller = CameraController(widget.cameras[0], ResolutionPreset.veryHigh,enableAudio: false);        
+    controller = CameraController(widget.cameras[0], ResolutionPreset.high,enableAudio: false);        
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -66,6 +78,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
       _model = await ObjectRecognition.init(); 
   }
   
+
   void doRecognition() {
     if(!mounted)
       return;
@@ -83,22 +96,21 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             imageHeight: img.height,imageWidth: img.width,
             imageMean: 127.5,
             imageStd: 127.5,
-            numResultsPerClass: 5,
-            //numBoxesPerBlock: 5,
-            threshold: 0.6              
+            numResultsPerClass: 2,
+            numBoxesPerBlock: 3,
+            threshold: 0.5              
           ).then((recognitons){
             if(recognitons.length>0){
-              ingredients = recognitons.toList();
-              debugPrint(recognitons.toList()[0].toString());
+              ingredients = recognitons;
+              //debugPrint(recognitons.toList()[0].toString());
               String detected = recognitons[0]["detectedClass"].toString();
               if(!results.contains(detected)){          
                 results.add(detected);
-              }
-            }
-            //setState(() {});           
-            //int endTime = new DateTime.now().millisecondsSinceEpoch;
-            //int duration = endTime-startTime;            
-            //debugPrint("run finish, process take:$duration");
+              }              
+            }            
+            //setState(() {});            
+            setRecognitions(recognitons, img.height, img.width);
+            setState(() {});
             isDetecting = false;              
           });                       
         }          
@@ -107,9 +119,12 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
       //controller.stopImageStream();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    double height = (screen.height/5)*3;
     if (controller == null || !controller.value.isInitialized) {
       return Container();
     }    
@@ -126,7 +141,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
           children: <Widget>[
             Container(
                     width: screen.width,
-                    height: (screen.height/5)*3,
+                    height: height,
                     child:Stack(
                       fit: StackFit.expand,
                       overflow: Overflow.clip,
@@ -138,7 +153,9 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                         Positioned(
                           right: 30,
                           bottom: 30,
-                          child: FloatingActionButton(                            
+                          
+                          child: FloatingActionButton(
+                            elevation: 1000,                       
                             child: Icon(Icons.camera_rear),
                             backgroundColor: (scan_flag)?Colors.green:Colors.grey,
                             onPressed: (){
@@ -153,7 +170,14 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                               );
                               setState(() {});
                             },
-                        ))
+                        )),
+                        BBox(
+                          ingredients == null ? [] : ingredients,
+                          math.max(_imageHeight, _imageWidth),
+                          math.min(_imageHeight, _imageWidth),
+                          height,
+                          screen.width,
+                        ),
                       ])
               ),
             new Container(
