@@ -50,8 +50,8 @@ class BBox extends StatelessWidget {
             padding: EdgeInsets.only(top: 5.0, left: 5.0),
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color.fromRGBO(37, 213, 253, 1.0),
-                width: 3.0,
+                color: Color.fromRGBO(255, 213, 77, .65),
+                width: 1.0,
               ),
             ),
             child: Text("${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",

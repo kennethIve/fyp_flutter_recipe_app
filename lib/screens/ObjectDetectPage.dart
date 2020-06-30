@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe/component/BBox.dart';
 import 'package:recipe/controller/objectRecognition.dart';
-import 'package:recipe/screens/SearchPage.dart';
 
 import 'dart:math' as math;
 
@@ -96,9 +95,10 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             imageHeight: img.height,imageWidth: img.width,
             imageMean: 127.5,
             imageStd: 127.5,
-            numResultsPerClass: 2,
+            numResultsPerClass: 1,
             numBoxesPerBlock: 3,
-            threshold: 0.5              
+            threshold: 0.5,
+            //asynch: false,
           ).then((recognitons){
             if(recognitons.length>0){
               ingredients = recognitons;
@@ -155,7 +155,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                           bottom: 30,
                           
                           child: FloatingActionButton(
-                            elevation: 1000,                       
+                            elevation: 1,                       
                             child: Icon(Icons.camera_rear),
                             backgroundColor: (scan_flag)?Colors.green:Colors.grey,
                             onPressed: (){
