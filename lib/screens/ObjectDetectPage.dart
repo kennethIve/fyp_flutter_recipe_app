@@ -52,7 +52,7 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
     scan_flag = false;
     initModel();
     //load a camera to camera chotroller
-    controller = CameraController(widget.cameras[0], ResolutionPreset.high,enableAudio: false);        
+    controller = CameraController(widget.cameras[0], ResolutionPreset.veryHigh,enableAudio: false);        
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -95,25 +95,29 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
             imageHeight: img.height,imageWidth: img.width,
             imageMean: 127.5,
             imageStd: 127.5,
-            numResultsPerClass: 1,
+            numResultsPerClass: 2,
             numBoxesPerBlock: 3,
-            threshold: 0.5,
+            threshold: 0.4,
             //asynch: false,
           ).then((recognitons){
             if(recognitons.length>0){
               ingredients = recognitons;
-              //debugPrint(recognitons.toList()[0].toString());
+              debugPrint(recognitons.toList()[0].toString());
               String detected = recognitons[0]["detectedClass"].toString();
               if(!results.contains(detected)){          
                 results.add(detected);
               }              
             }            
-            //setState(() {});            
+            //setState(() {});
             setRecognitions(recognitons, img.height, img.width);
             setState(() {});
             isDetecting = false;              
           });                       
         }          
+      }else{
+        ingredients = [];
+        setRecognitions([], img.height, img.width);
+        setState(() {});
       }
     });
       //controller.stopImageStream();
@@ -150,10 +154,16 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                             aspectRatio: 4/6,
                             child: CameraPreview(controller),
                           ),
+                        BBox(
+                          ingredients == null ? [] : ingredients,
+                          math.max(_imageHeight, _imageWidth),
+                          math.min(_imageHeight, _imageWidth),
+                          height,
+                          screen.width,
+                        ),
                         Positioned(
                           right: 30,
-                          bottom: 30,
-                          
+                          bottom: 30,                          
                           child: FloatingActionButton(
                             elevation: 1,                       
                             child: Icon(Icons.camera_rear),
@@ -171,13 +181,6 @@ class _ObjectDetectPageState extends State<ObjectDetectPage> {
                               setState(() {});
                             },
                         )),
-                        BBox(
-                          ingredients == null ? [] : ingredients,
-                          math.max(_imageHeight, _imageWidth),
-                          math.min(_imageHeight, _imageWidth),
-                          height,
-                          screen.width,
-                        ),
                       ])
               ),
             new Container(

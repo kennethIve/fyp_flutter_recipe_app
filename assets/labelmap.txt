@@ -4,3 +4,20 @@ banana
 beef
 cabbage
 carrot
+chicken
+chinese cabbage
+eggplant
+grape
+ham
+lettuce
+mushroom
+onion
+orange
+pork
+potato
+salmon
+sausage
+shrimp
+strawberry
+tomato
+tuna
